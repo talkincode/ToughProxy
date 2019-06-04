@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.toughsocks.mapper.ConfigMapper">
+  <resultMap id="BaseResultMap" type="org.toughsocks.entity.Config">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+
+
+  <select id="findConfig" resultMap="BaseResultMap" useCache="true">
+    select id, type, name, value
+    from ts_config
+    where type = #{type} and name = #{name} limit 1
+  </select>
+
+
+  <select id="queryForList" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select id, type, name, value
+    from ts_config
+    <where>
+      <if test="type != null  and type != '' "> and type = #{type}</if>
+    </where>
+  </select>
+
+
+  <insert id="insertConfig" parameterType="org.toughsocks.entity.Config" flushCache="true">
+    insert into ts_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null  and id != ''  ">id,</if>
+      <if test="name != null  and name != ''  ">name,</if>
+      <if test="type != null  and type != ''  ">type,</if>
+      <if test="value != null  and value != ''  ">value,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null  and id != ''  ">#{id},</if>
+      <if test="name != null  and name != ''  ">#{name},</if>
+      <if test="type != null  and type != ''  ">#{type},</if>
+      <if test="value != null  and value != ''  ">#{value},</if>
+    </trim>
+  </insert>
+
+
+  <select id="updateConfig" parameterType="org.toughsocks.entity.Config" flushCache="true">
+    update ts_config SET  value=#{value} where type=#{type} and name=#{name}
+  </select>
+
+  <delete id="deleteConfig">
+    delete from ts_config where type = #{type} and name = #{name}
+  </delete>
+
+  <delete id="deleteById" parameterType="java.lang.Long">
+    delete from ts_config where id = #{id}
+  </delete>
+
+
+
+</mapper>
