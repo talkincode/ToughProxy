@@ -32,6 +32,12 @@ public class SystemTaskScheduler  {
 
     @Autowired
     private TrafficStat trafficStat;
+
+    @Autowired
+    private Socks5Stat socks5Stat;
+
+    @Autowired
+    private TicketCache ticketCache;
     /**
      * 消息统计任务
      */
@@ -41,8 +47,8 @@ public class SystemTaskScheduler  {
             TrafficCounter trafficCounter = socks5Config.getTrafficHandler().trafficCounter();
             try {
                 TimeUnit.SECONDS.sleep(5);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignore) {
+
             }
             final long totalRead = trafficCounter.cumulativeReadBytes();
             final long totalWrite = trafficCounter.cumulativeWrittenBytes();
@@ -53,6 +59,23 @@ public class SystemTaskScheduler  {
 //            logger.print("流量监控: " + System.lineSeparator() + trafficCounter);
         });
     }
+
+    /**
+     * 消息统计任务
+     */
+    @Scheduled(fixedDelay = 5000, initialDelay = 5000)
+    public void updateSocksStat(){
+        socks5Stat.runStat();
+    }
+
+    /**
+     * 同步上网日志
+     */
+    @Scheduled(fixedRate = 10 * 1000)
+    public void syncTicket() {
+        systaskExecutor.execute(()->ticketCache.syncData());
+    }
+
 
 
 }

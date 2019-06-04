@@ -11,6 +11,7 @@ import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.toughsocks.component.Memarylogger;
+import org.toughsocks.component.SessionCache;
 import org.toughsocks.component.Socks5Stat;
 import org.toughsocks.config.Socks5Config;
 
@@ -27,6 +28,9 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
     @Autowired
     private Socks5Stat socks5Stat;
 
+    @Autowired
+    private SessionCache sessionCache;
+
     private boolean checkUserAndPasswd(String username, String password){
         return true;
     }
@@ -40,6 +44,7 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
             socks5Stat.update(Socks5Stat.AUTH_SUCCESS);
             Socks5PasswordAuthResponse passwordAuthResponse = new DefaultSocks5PasswordAuthResponse(Socks5PasswordAuthStatus.SUCCESS);
             ctx.writeAndFlush(passwordAuthResponse);
+            sessionCache.setUsername(ctx.channel().remoteAddress().toString(),msg.username());
         } else {
             socks5Stat.update(Socks5Stat.AUTH_FAIILURE);
             Socks5PasswordAuthResponse passwordAuthResponse = new DefaultSocks5PasswordAuthResponse(Socks5PasswordAuthStatus.FAILURE);

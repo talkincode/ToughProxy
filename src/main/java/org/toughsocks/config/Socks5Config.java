@@ -131,7 +131,7 @@ public class Socks5Config {
 
     @PreDestroy
     public void stop() throws Exception {
-        serverChannelFuture.channel().closeFuture().sync();
+        serverChannelFuture.channel().closeFuture();
     }
 
     public GlobalTrafficShapingHandler getTrafficHandler() {

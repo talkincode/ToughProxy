@@ -31,7 +31,7 @@ public class MvcConfigurer extends WebMvcConfigurerAdapter {
     }
 
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(accessInterceptor).addPathPatterns("/api/v6/**");
+        registry.addInterceptor(accessInterceptor).addPathPatterns("/api/**");
         registry.addInterceptor(new SessionInterceptor()).addPathPatterns("/admin/**")
                 .excludePathPatterns("/")
                 .excludePathPatterns("/admin")

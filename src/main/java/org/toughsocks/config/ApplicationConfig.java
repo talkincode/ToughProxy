@@ -14,8 +14,8 @@ import javax.servlet.MultipartConfigElement;
 public class ApplicationConfig {
 
     private String version;
-    private String apikey;
-    private String apisecret;
+    private String ticketDir;
+
 
     @Bean
     public MultipartConfigElement multipartConfigElement() {
@@ -27,13 +27,13 @@ public class ApplicationConfig {
 
     @Bean
     public ThreadPoolTaskExecutor systaskExecutor(){
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(32);
-        taskExecutor.setMaxPoolSize(512);
-        taskExecutor.setQueueCapacity(100000);
-        taskExecutor.setKeepAliveSeconds(60);
-        taskExecutor.setThreadNamePrefix("TASK_EXECUTOR");
-        return taskExecutor;
+        ThreadPoolTaskExecutor sysTaskExecutor = new ThreadPoolTaskExecutor();
+        sysTaskExecutor.setCorePoolSize(32);
+        sysTaskExecutor.setMaxPoolSize(512);
+        sysTaskExecutor.setQueueCapacity(100000);
+        sysTaskExecutor.setKeepAliveSeconds(60);
+        sysTaskExecutor.setThreadNamePrefix("TASK_EXECUTOR");
+        return sysTaskExecutor;
     }
 
 
@@ -42,27 +42,19 @@ public class ApplicationConfig {
         return new Gson();
     }
 
-    public String getApikey() {
-        return apikey;
-    }
-
-    public void setApikey(String apikey) {
-        this.apikey = apikey;
-    }
-
-    public String getApisecret() {
-        return apisecret;
-    }
-
-    public void setApisecret(String apisecret) {
-        this.apisecret = apisecret;
-    }
-
     public String getVersion() {
         return version;
     }
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getTicketDir() {
+        return ticketDir;
+    }
+
+    public void setTicketDir(String ticketDir) {
+        this.ticketDir = ticketDir;
     }
 }

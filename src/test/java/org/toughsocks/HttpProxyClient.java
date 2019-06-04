@@ -29,7 +29,7 @@ public class HttpProxyClient {
 
 
 		OkHttpClient client = new OkHttpClient.Builder().proxy(proxyTest).build();
-		for(int i = 0; i< 3;i++){
+		for(int i = 0; i< 30;i++){
 //			Request request = new Request.Builder().url("http://192.168.88.198:1823/socktest").build();
 			Request request = new Request.Builder().url("http://www.baidu.com").addHeader("connection","Keep-Alive").build();
 			Response response = client.newCall(request).execute();

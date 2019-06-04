@@ -1,6 +1,7 @@
 package org.toughsocks.handler;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -8,9 +9,13 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.socksx.v5.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.toughsocks.common.DateTimeUtil;
 import org.toughsocks.component.Memarylogger;
+import org.toughsocks.component.SessionCache;
 import org.toughsocks.component.Socks5Stat;
+import org.toughsocks.component.TicketCache;
 import org.toughsocks.config.Socks5Config;
+import org.toughsocks.entity.SocksSession;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +36,11 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
     @Autowired
     private Socks5Stat socks5Stat;
 
+    @Autowired
+    private SessionCache sessionCache;
+    @Autowired
+    private TicketCache ticketCache;
+
     private final static Map<String,Socks5UdpRelay> relayMap = new ConcurrentHashMap<>();
 
     @Override
@@ -38,7 +48,6 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
         if(msg.type().equals(Socks5CommandType.CONNECT)) {
             if(socks5Config.isDebug())
                 memarylogger.print("0-准备连接目标服务器  : " + msg.type() + "," + msg.dstAddr() + "," + msg.dstPort());
-
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(bossGroup)
             .channel(NioSocketChannel.class)
@@ -46,7 +55,6 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
             .handler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
-                    //ch.pipeline().addLast(new LoggingHandler());//in out
                     //将目标服务器信息转发给客户端
                     ch.pipeline().addLast(new Dest2ClientHandler(clientChannelContext));
                 }
@@ -66,6 +74,17 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
                     clientChannelContext.pipeline().addLast(new Client2DestHandler(future1));
                     Socks5CommandResponse commandResponse = new DefaultSocks5CommandResponse(Socks5CommandStatus.SUCCESS, Socks5AddressType.IPv4);
                     clientChannelContext.writeAndFlush(commandResponse);
+
+                    SocksSession session = new SocksSession();
+                    InetSocketAddress inetSrcaddr = (InetSocketAddress)clientChannelContext.channel().remoteAddress();
+                    session.setUsername(sessionCache.getUsername(clientChannelContext.channel().remoteAddress().toString()));
+                    session.setSrcAddr(inetSrcaddr.getHostString());
+                    session.setSrcPort(inetSrcaddr.getPort());
+                    session.setDstAddr(msg.dstAddr());
+                    session.setDstPort(msg.dstPort());
+                    session.setStartTime(DateTimeUtil.getDateTimeString());
+                    sessionCache.addSession(session);
+
                 } else {
                     if(socks5Config.isDebug())
                         memarylogger.print("2-连接目标服务器失败");
@@ -100,9 +119,38 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
         }
     }
 
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        super.channelInactive(ctx);
+    private void updateSessionUpBytes(ChannelHandlerContext ctx, long bytes){
+        try{
+            InetSocketAddress addr = (InetSocketAddress) ctx.channel().remoteAddress();
+            String key = addr.getHostString()+ ":"+addr.getPort();
+            sessionCache.updateUpBytes(key,bytes);
+        }catch (Exception ignore){}
+    }
+
+    private void updateSessionDownBytes(ChannelHandlerContext ctx, long bytes){
+        try{
+            InetSocketAddress addr = (InetSocketAddress) ctx.channel().remoteAddress();
+            String key = addr.getHostString()+ ":"+addr.getPort();
+            sessionCache.updateDownBytes(key,bytes);
+        }catch (Exception ignore){}
+    }
+
+    /***
+     * 停止连接会话
+     * @param ctx
+     */
+    private void stopSession(ChannelHandlerContext ctx){
+        SocksSession sessiion = sessionCache.stopSession((InetSocketAddress) ctx.channel().remoteAddress());
+        if(sessiion!=null){
+            ticketCache.addTicket(sessiion);
+        }
+    }
+
+    /**
+     * 关闭 UDP 中继
+     * @param ctx
+     */
+    private void stopUdpRelay(ChannelHandlerContext ctx){
         Socks5UdpRelay relay = relayMap.remove(ctx.channel().id().asLongText());
         if(relay!=null){
             relay.closeRelay();
@@ -110,12 +158,17 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
     }
 
     @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        this.stopSession(ctx);
+        this.stopUdpRelay(ctx);
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
-        Socks5UdpRelay relay = relayMap.remove(ctx.channel().id().asLongText());
-        if(relay!=null){
-            relay.closeRelay();
-        }
+        this.stopSession(ctx);
+        this.stopUdpRelay(ctx);
     }
 
     /**
@@ -136,7 +189,10 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
         public void channelRead(ChannelHandlerContext ctx2, Object destMsg) throws Exception {
             if(socks5Config.isDebug())
                 memarylogger.print("将目标服务器信息转发给客户端");
+            ByteBuf message = (ByteBuf) destMsg;
+            long bytes = message.readableBytes();
             clientChannelContext.writeAndFlush(destMsg);
+            updateSessionDownBytes(clientChannelContext,bytes);
         }
 
         @Override
@@ -156,6 +212,7 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
     private  class Client2DestHandler extends ChannelInboundHandlerAdapter {
 
         private ChannelFuture destChannelFuture;
+        private SocksSession session;
 
         public Client2DestHandler(ChannelFuture destChannelFuture) {
             this.destChannelFuture = destChannelFuture;
@@ -165,7 +222,10 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
             if(socks5Config.isDebug())
                 memarylogger.print("将客户端的消息转发给目标服务器端");
+            ByteBuf message = (ByteBuf) msg;
+            long bytes = message.readableBytes();
             destChannelFuture.channel().writeAndFlush(msg);
+            updateSessionUpBytes(ctx,bytes);
         }
 
         @Override
