@@ -45,12 +45,16 @@ public class MainController implements Constant {
         ArrayList<MenuItem> menuItems = new ArrayList<>();
         MenuItem dashboardItem = new MenuItem("dashboard", "dashboard", "控制面板");
         MenuItem cfgItem = new MenuItem("config", "cogs", "系统设置");
-        MenuItem userItem = new MenuItem("user", "users", "用户管理");
-        MenuItem sessionItem = new MenuItem("session", "user-circle", "连接查询");
+        MenuItem aclItem = new MenuItem("acl", "key", "访问控制");
+        MenuItem groupItem = new MenuItem("group", "users", "用户组");
+        MenuItem userItem = new MenuItem("user", "user", "用户管理");
+        MenuItem sessionItem = new MenuItem("session", "link", "连接查询");
         MenuItem ticketItem = new MenuItem("ticket", "table", "网络日志");
         MenuItem syslogItem = new MenuItem("syslog", "hdd-o", "系统日志");
         menuItems.add(dashboardItem);
         menuItems.add(cfgItem);
+        menuItems.add(aclItem);
+        menuItems.add(groupItem);
         menuItems.add(userItem);
         menuItems.add(sessionItem);
         menuItems.add(ticketItem);

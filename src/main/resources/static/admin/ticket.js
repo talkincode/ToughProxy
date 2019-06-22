@@ -81,6 +81,7 @@ toughsocks.admin.ticket.loadPage = function(session){
                 rightSplit: 1,
                 columns: [
                     { id: "username", header: ["用户名"] , adjust:true ,sort: "string", },
+                    { id: "type", header: ["类型"] , adjust:true ,sort: "string" },
                     { id: "srcAddr", header: ["源地址"], adjust:true  },
                     { id: "srcPort", header: ["源端口"] ,sort: "string",},
                     { id: "dstAddr", header: ["目的地址"], sort: "string", adjust:true  },

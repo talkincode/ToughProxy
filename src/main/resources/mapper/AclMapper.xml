@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.toughsocks.mapper.AclMapper">
+    <resultMap id="BaseResultMap" type="org.toughsocks.entity.Acl">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="policy" jdbcType="VARCHAR" property="policy" />
+        <result column="ipaddr" jdbcType="VARCHAR" property="ipaddr" />
+    </resultMap>
+
+    <select id="queryForList" parameterType="org.toughsocks.entity.Acl" resultMap="BaseResultMap" useCache="true">
+        select id, policy, ipaddr  from ts_acl
+        <where>
+            <if test="policy != null  and policy != '' "> and policy = #{policy}</if>
+            <if test="ipaddr != null  and ipaddr != '' "> and ipaddr = #{ipaddr}</if>
+        </where>
+    </select>
+
+    <select id="findById" resultMap="BaseResultMap" useCache="false">
+        select id, policy, ipaddr  from ts_acl  where id = #{id}
+    </select>
+
+    <select id="findByIpaddr" resultMap="BaseResultMap" useCache="true">
+        select id, policy, ipaddr  from ts_acl  where ipaddr = #{ipaddr} limit 1
+    </select>
+
+    <select id="findByPolicy" resultMap="BaseResultMap" useCache="true">
+        select id, policy, ipaddr  from ts_acl  where policy = #{policy}
+    </select>
+
+    <insert id="insertAcl" parameterType="org.toughsocks.entity.Acl" flushCache="true">
+        insert into ts_acl
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''  ">id,</if>
+            <if test="policy != null  and policy != ''  ">policy,</if>
+            <if test="ipaddr != null  and ipaddr != ''  ">ipaddr,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''  ">#{id},</if>
+            <if test="policy != null  and policy != ''  ">#{policy},</if>
+            <if test="ipaddr != null  and ipaddr != ''  ">#{ipaddr},</if>
+        </trim>
+    </insert>
+
+    <select id="updateAclPolicy" flushCache="true">
+        update ts_acl set policy = #{policy} where id = #{id}
+    </select>
+
+
+    <delete id="deleteByIpaddr" parameterType="java.lang.String" flushCache="true">
+        delete from ts_acl where ipaddr = #{ipaddr}
+    </delete>
+
+    <delete id="deleteById" parameterType="java.lang.Long" flushCache="true">
+        delete from ts_acl where id = #{id}
+    </delete>
+
+</mapper>

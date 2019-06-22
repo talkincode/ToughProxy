@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.toughsocks.common.DateTimeUtil;
 import org.toughsocks.common.RestResult;
 import org.toughsocks.common.SystemUtil;
-import org.toughsocks.component.Socks5Stat;
+import org.toughsocks.component.SocksStat;
 import org.toughsocks.component.TrafficStat;
 
 import java.util.Map;
@@ -18,7 +18,7 @@ import java.util.Map;
 public class DashboardController {
 
     @Autowired
-    private Socks5Stat socks5Stat;
+    private SocksStat socks5Stat;
     @Autowired
     private TrafficStat trafficStat;
 

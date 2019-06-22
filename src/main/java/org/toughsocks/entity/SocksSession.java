@@ -2,6 +2,10 @@ package org.toughsocks.entity;
 
 public class SocksSession implements Cloneable{
 
+    public final static String SOCKS4 = "socks4";
+    public final static String SOCKS5 = "socks5";
+
+    private String type;
     private String username;
     private String srcAddr;
     private int srcPort;
@@ -14,6 +18,14 @@ public class SocksSession implements Cloneable{
 
     public String getKey(){
         return srcAddr + ":"+srcPort;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getUsername() {
@@ -103,6 +115,7 @@ public class SocksSession implements Cloneable{
 
     public static String getHeaderString(){
         StringBuilder buff = new StringBuilder();
+        buff.append("type").append(",");
         buff.append("username").append(",");
         buff.append("srcAddr").append(",");
         buff.append("srcPort").append(",");
@@ -117,6 +130,7 @@ public class SocksSession implements Cloneable{
 
     public String toString(){
         StringBuilder buff = new StringBuilder();
+        buff.append(type).append(",");
         buff.append(username).append(",");
         buff.append(srcAddr).append(",");
         buff.append(safestr(srcPort)).append(",");
@@ -133,19 +147,20 @@ public class SocksSession implements Cloneable{
     public static SocksSession fromString(String line) {
         try{
             String [] strs = line.trim().split(",");
-            if(strs.length!=9){
+            if(strs.length!=10){
                 return null;
             }
             SocksSession log = new SocksSession();
-            log.setUsername(strs[0]);
-            log.setSrcAddr(strs[1]);
-            log.setSrcPort(Integer.valueOf(strs[2]));
-            log.setDstAddr(strs[3]);
-            log.setDstPort(Integer.valueOf(strs[4]));
-            log.setUpBytes(Long.valueOf(strs[5]));
-            log.setDownBytes(Long.valueOf(strs[6]));
-            log.setStartTime(strs[7]);
-            log.setEndTime(strs[8]);
+            log.setType(strs[0]);
+            log.setUsername(strs[1]);
+            log.setSrcAddr(strs[2]);
+            log.setSrcPort(Integer.valueOf(strs[3]));
+            log.setDstAddr(strs[4]);
+            log.setDstPort(Integer.valueOf(strs[5]));
+            log.setUpBytes(Long.valueOf(strs[6]));
+            log.setDownBytes(Long.valueOf(strs[7]));
+            log.setStartTime(strs[8]);
+            log.setEndTime(strs[9]);
             return log;
         } catch(Exception e){
             return null;

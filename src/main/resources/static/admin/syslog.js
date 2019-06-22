@@ -39,7 +39,10 @@ toughsocks.admin.syslog.loadPage = function(session){
                                 {
                                     cols:[
                                         {view: "richselect",  name: "type", label: "", value: "socks5", labelWidth:0,width:150,
-                                            options: [{ id: "socks5", value: "Socks5" },
+                                            options: [
+                                                { id: "socks5", value: "Socks5" },
+                                                { id: "socks4", value: "Socks4" },
+                                                { id: "http", value: "Http" },
                                                 { id: "api", value: "API接口" },
                                                 { id: "error", value: "错误日志" },
                                                 { id: "system", value: "系统日志" }]},

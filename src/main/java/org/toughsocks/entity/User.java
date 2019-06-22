@@ -1,15 +1,26 @@
 package org.toughsocks.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 import java.sql.Timestamp;
 
 public class User {
 
+    @JsonSerialize(using= ToStringSerializer.class)
     private Long id;
+    @JsonSerialize(using= ToStringSerializer.class)
+    private Long groupId;
+    private Integer groupPolicy;
+    private String realname;
     private String username;
     private String password;
-    private String cpassword;
-    private String status;
-    private Timestamp beginTime;
+    private String mobile;
+    private String email;
+    private Integer status;
+    private Integer upLimit;
+    private Integer downLimit;
+    private Integer maxSession;
     private Timestamp expireTime;
     private Timestamp createTime;
     private Timestamp updateTime;
@@ -21,6 +32,30 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    public Integer getGroupPolicy() {
+        return groupPolicy;
+    }
+
+    public void setGroupPolicy(Integer groupPolicy) {
+        this.groupPolicy = groupPolicy;
+    }
+
+    public String getRealname() {
+        return realname;
+    }
+
+    public void setRealname(String realname) {
+        this.realname = realname;
     }
 
     public String getUsername() {
@@ -39,28 +74,52 @@ public class User {
         this.password = password;
     }
 
-    public String getCpassword() {
-        return cpassword;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setCpassword(String cpassword) {
-        this.cpassword = cpassword;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
-    public String getStatus() {
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
-    public Timestamp getBeginTime() {
-        return beginTime;
+    public Integer getUpLimit() {
+        return upLimit;
     }
 
-    public void setBeginTime(Timestamp beginTime) {
-        this.beginTime = beginTime;
+    public void setUpLimit(Integer upLimit) {
+        this.upLimit = upLimit;
+    }
+
+    public Integer getDownLimit() {
+        return downLimit;
+    }
+
+    public void setDownLimit(Integer downLimit) {
+        this.downLimit = downLimit;
+    }
+
+    public Integer getMaxSession() {
+        return maxSession;
+    }
+
+    public void setMaxSession(Integer maxSession) {
+        this.maxSession = maxSession;
     }
 
     public Timestamp getExpireTime() {

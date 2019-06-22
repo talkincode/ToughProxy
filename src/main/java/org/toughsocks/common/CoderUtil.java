@@ -28,8 +28,10 @@ public class CoderUtil
 	
 //	private static long L200801010000 = 1199116800000l;
 	private static int sequenceSeed = 0;
+	private static int sequenceSeed4 = 0;
 	private static Object sequenceLock = new Object();
-	
+	private static Object sequenceLock4 = new Object();
+
     private static int letterSeed = 0;
     private static Object letterLock = new Object();
 	
@@ -47,6 +49,14 @@ public class CoderUtil
 	    
 	    return Long.parseLong(datetime14 + sequence5);
 	}
+
+	public static long randomLongId18()
+	{
+	    String datetime14 = DateTimeUtil.getDateTime14String();
+	    String sequence4 = getSequence4();
+
+	    return Long.parseLong(datetime14 + sequence4);
+	}
 	
 	/** 获取16位yyMMddHHmmss + 4(a-z0-9)的循环字符串，支持在1秒内作4个小写字母和数字的随机 */
 	public static String random16str()
@@ -57,18 +67,30 @@ public class CoderUtil
 	    return datetime12 + sequence4;
 	}
 	
+    private static String getSequence4()
+    {//从0开始
+        synchronized (sequenceLock4)
+        {
+            if (sequenceSeed4 > 9999)
+				sequenceSeed4 = 0;
+            
+            int value = sequenceSeed4++;
+            return StringUtil.getPrefixFixLenStr(value, 4, '0');
+        }
+    }
+
     private static String getSequence5()
     {//从0开始
         synchronized (sequenceLock)
         {
             if (sequenceSeed > 99999)
                 sequenceSeed = 0;
-            
+
             int value = sequenceSeed++;
             return StringUtil.getPrefixFixLenStr(value, 5, '0');
         }
     }
-    
+
     private static String getLetter4()
     {//从1开始
         synchronized (letterLock)

@@ -211,16 +211,21 @@ toughsocks.admin.dashboard.socksStatChart = function (session,uid) {
         legend: {
             align: 'center',verticalAlign: 'top',x: 0,y: 0
         },
-        colors:['#00cca0', '#0080ff', '#ccae00','#cc0b2a'],
+        colors:['#2fcc79', '#489f3e', '#b68c21','#cc5933','#94915e','#fbb079'],
         xAxis: {type: 'datetime',tickInterval : 300*1000},
         yAxis: {title: {text: '数量'},
             labels: {formatter: function() {return this.value;}}
         },
-        tooltip: {shared: true},
+        tooltip: {
+            shared: true,
+            pointFormatter: function() {
+                return "<span style='color: "+this.series.color+"'>"+ this.series.name +": <b> "+ this.y + "</b></span><br>";
+            }
+        },
         plotOptions: {areaspline: {
                 stacking: 'normal',
                 marker: {enabled: false,symbol: 'circle',radius: 2,states: {hover: {enabled: true}}},
-                fillOpacity: 0.2,
+                fillOpacity: 0.7,
                 series: {
                     pointPlacement: "on"
                 }
@@ -235,12 +240,12 @@ toughsocks.admin.dashboard.updateSocksStatChart = function (session,uid) {
         var data = result.json();
         try {
             var AuthSuccessStat = {name:'认证成功',data:data.AuthSuccessStat};
-            var AuthFailureStat = {name:'认证失败',data:data.AuthFailureStat};
-            var NotSupportStat = {name:'不支持协议',data:data.NotSupportStat};
             var ConnectSuccessStat = {name:'连接成功',data:data.ConnectSuccessStat};
+            var AuthFailureStat = {name:'认证失败',data:data.AuthFailureStat};
             var ConnectFailureStat = {name:'连接失败',data:data.ConnectFailureStat};
+            var NotSupportStat = {name:'不支持协议',data:data.NotSupportStat};
             var OtherErrStat = {name:'其他错误',data:data.OtherErrStat};
-            $$(uid).parse([AuthSuccessStat,AuthFailureStat,NotSupportStat,ConnectSuccessStat,ConnectFailureStat,OtherErrStat]);
+            $$(uid).parse([AuthSuccessStat,ConnectSuccessStat,AuthFailureStat,ConnectFailureStat,NotSupportStat,OtherErrStat]);
         } catch(e){
             console.log(e);
         }
@@ -274,16 +279,21 @@ toughsocks.admin.dashboard.trafficStatChart = function (session,uid) {
         legend: {
             align: 'center',verticalAlign: 'top',x: 0,y: 0
         },
-        colors:['#40cc6f', '#c4aaff', '#ccc300','#006bcc','#cc6d3a','#cc6587','#cc0018','#cc00b1','#6d00cc','#cc9a00'],
+        colors:['#3df171', '#36abec'],
         xAxis: {type: 'datetime',tickInterval : 300*1000},
         yAxis: {title: {text: '流量'},
             labels: {formatter: function() {return bytesToSize(this.value);}}
         },
-        tooltip: {shared: true},
+        tooltip: {
+            shared: true,
+            pointFormatter: function() {
+                return "<span style='color: "+this.series.color+"'>"+ this.series.name +": <b> "+ bytesToSize(this.y) + "</b></span><br>";
+            }
+        },
         plotOptions: {areaspline: {
                 stacking: 'normal',
                 marker: {enabled: false,symbol: 'circle',radius: 2,states: {hover: {enabled: true}}},
-                fillOpacity: 0.2,
+                fillOpacity: 0.7,
                 series: {
                     pointPlacement: "on"
                 }

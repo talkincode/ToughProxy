@@ -3,13 +3,10 @@ if (!window.toughsocks.admin.user)
 
 
 toughsocks.admin.user.dataViewID = "toughsocks.admin.user.dataViewID";
-toughsocks.admin.user.detailFormID = "toughsocks.admin.user.detailFormID";
 toughsocks.admin.user.loadPage = function(session,keyword){
     var tableid = webix.uid();
     var queryid = webix.uid();
     toughsocks.admin.user.reloadData = function(){
-        $$(toughsocks.admin.user.detailFormID).hide();
-        $$(toughsocks.admin.user.dataViewID).show();
         $$(tableid).refresh();
         $$(tableid).clearAll();
         var params = $$(queryid).getValues();
@@ -96,14 +93,14 @@ toughsocks.admin.user.loadPage = function(session,keyword){
                                                 { view: "datepicker", name: "createTime", label: "创建时间不超过", labelWidth:100, stringResult: true,timepicker: true, format: "%Y-%m-%d" },
                                                 { view: "datepicker", name: "expireTime", label: "到期时间不超过", labelWidth:100,stringResult: true, format: "%Y-%m-%d" },
                                                 {
-                                                    view: "richselect", css:"nborder-input2", name: "status", value:"enabled", label: "用户状态", icon: "caret-down",
+                                                    view: "richselect", css:"nborder-input2", name: "status", value:"1", label: "用户状态", icon: "caret-down",
                                                     options: [
-                                                        { id: 'enabled', value: "正常" },
-                                                        { id: 'disabled', value: "停用" },
-                                                        { id: 'expire', value: "已到期" }
+                                                        { id: '1', value: "正常" },
+                                                        { id: '0', value: "停用" },
+                                                        { id: '2', value: "已到期" }
                                                     ]
                                                 },
-                                                {view: "text", css:"nborder-input2",  name: "subscriber", label: "用户名", placeholder: "帐号精确匹配", width:240},
+                                                {view: "text", css:"nborder-input2",  name: "username", label: "用户名", placeholder: "帐号精确匹配", width:240},
                                                 {view: "text", css:"nborder-input2",  name: "keyword", label: "",labelWidth:0,  value: keyword || "", placeholder: "帐号模糊匹配", width:180},
 
                                             {
@@ -135,31 +132,29 @@ toughsocks.admin.user.loadPage = function(session,keyword){
                                 columns: [
                                     { id: "state", header: { content: "masterCheckbox", css: "center" }, width: 35, css: "center", template: "{common.checkbox()}" },
                                     { id: "id", header: ["ID"], hidden:true},
-                                    { id: "subscriber", header: ["帐号"],adjust:true},
+                                    { id: "username", header: ["帐号"],adjust:true},
                                     { id: "realname", header: ["姓名"],adjust:true},
                                     {
                                         id: "status", header: ["状态"], sort: "string",  adjust:true, template: function (obj) {
-                                            if (obj.status === 'enabled' && new Date(obj.expireTime) < new Date()) {
+                                            if(new Date(obj.expireTime) < new Date()) {
                                                 return "<span style='color:orange;'>过期</span>";
-                                            } else if (obj.status === 'enabled') {
+                                            }else if (obj.status === 0) {
+                                                return "<span style='color:orange;'>停用</span>";
+                                            } else if (obj.status === 1) {
                                                 return "<span style='color:green;'>正常</span>";
-                                            } else if (obj.status === 'disabled') {
-                                                return "<span style='color:red;'>禁用</span>";
                                             }
+
                                         }
                                     },
                                     { id: "expireTime", header: ["过期时间"],sort:"date",adjust:true},
-                                    { id: "addrPool", header: ["地址池"] ,adjust:true},
-                                    { id: "activeNum", header: ["最大在线"],adjust:true},
-                                    { id: "ipAddr", header: ["ip 地址"],adjust:true},
-                                    { id: "macAddr", header: ["MAC 地址"],adjust:true},
-                                    { id: "inVlan", header: ["内层VLAN"],adjust:true},
-                                    { id: "outVlan", header: ["外层VLAN"],adjust:true},
+                                    { id: "mobile", header: ["电话"] ,adjust:true},
+                                    { id: "email", header: ["电子邮件"] ,adjust:true},
+                                    { id: "maxSession", header: ["最大在线"],adjust:true},
+                                    { id: "upLimit", header: ["上行限速(KB)"],adjust:true},
+                                    { id: "downLimit", header: ["下行限速(KB)"],adjust:true},
                                     { id: "remark", header: ["备注"],fillspace:true},
                                     { id: "opt", header: '操作', adjust:true,template: function(obj){
                                            var actions = [];
-                                           actions.push("<span title='测试' class='table-btn do_tester'><i class='fa fa-tty'></i></span> ");
-                                           actions.push("<span title='详情' class='table-btn do_detail'><i class='fa fa-eye'></i></span> ");
                                             actions.push("<span title='修改' class='table-btn do_update'><i class='fa fa-edit'></i></span> ");
                                             // actions.push("<span title='删除账号' class='table-btn do_delete'><i class='fa fa-times'></i></span> ");
                                            return actions.join(" ");
@@ -183,38 +178,11 @@ toughsocks.admin.user.loadPage = function(session,keyword){
                                         reloadData();
                                     }
                                 },
-                                on: {
-                                    onItemDblClick: function(id, e, node){
-                                        var item = this.getSelectedItem();
-                                        webix.require("admin/subscribeDetail.js?rand="+new Date().getTime(), function () {
-                                            toughsocks.admin.user.subscribeDetail(session, item.id, function () {
-                                                reloadData();
-                                            });
-                                        });
-
-                                    }
-                                },
                                 onClick: {
-                                    do_detail: function (e, id) {
-                                        var item= this.getItem(id);
-                                        webix.require("admin/subscribeDetail.js?rand="+new Date().getTime(), function () {
-                                            toughsocks.admin.user.subscribeDetail(session, item.id, function () {
-                                                reloadData();
-                                            });
-                                        });
-                                    },
                                     do_update: function(e, id){
-                                        toughsocks.admin.user.subscribeUpdate(session, this.getItem(id), function () {
+                                        toughsocks.admin.user.userUpdate(session, this.getItem(id), function () {
                                             reloadData();
                                         });
-                                    },
-                                    do_delete: function(e, id){
-                                        toughsocks.admin.user.userDelete(this.getItem(id).id, function () {
-                                            reloadData();
-                                        });
-                                    },
-                                    do_tester: function(e, id){
-                                        toughsocks.admin.user.subscribeRadiusTest(session,this.getItem(id));
                                     }
                                 }
                             },
@@ -252,7 +220,7 @@ toughsocks.admin.user.loadPage = function(session,keyword){
             }
         ]
     };
-    toughradius.admin.methods.addTabView("toughsocks.admin.user","user-o","用户管理", cview, true);
+    toughsocks.admin.methods.addTabView("toughsocks.admin.user","user-o","用户管理", cview, true);
     webix.extend($$(tableid), webix.ProgressBar);
 };
 
@@ -295,16 +263,16 @@ toughsocks.admin.user.OpenUserForm = function(session){
                     scroll: 'y',
                     elementsConfig: { labelWidth: 110 },
                     elements: [
-                        { view: "text", name: "subscriber", label: "帐号", validate:webix.rules.isNotEmpty },
+                        { view: "richselect", name: "groupId", label: "用户组(*)", icon: "caret-down", validate:webix.rules.isNotEmpty,
+                            options: {view:"suggest",url:"/admin/group/options"}
+                        },
+                        { view: "text", name: "realname", label: "姓名", validate:webix.rules.isNotEmpty },
+                        { view: "text", name: "username", label: "帐号", validate:webix.rules.isNotEmpty },
+                        { view: "text", name: "email", label: "电子邮箱"},
+                        { view: "text", name: "mobile", label: "电话"},
                         { view: "text", name: "password", label: "认证密码", validate:webix.rules.isNotEmpty},
                         { view: "datepicker", name: "expireTime", label: "过期时间", stringResult:true, timepicker: true, format: "%Y-%m-%d %h:%i", validate:webix.rules.isNotEmpty },
-                        { view: "text", name: "addrPool", label: "地址池" },
-                        { view: "text", name: "ipAddr", label: "固定IP地址" , placeholder: "可选，填写后则地址池无效"},
-                        { view: "counter", name: "activeNum", label: "最大在线", placeholder: "最大在线", value: 1, min: 1, max: 99999},
-                        { view: "radio", name: "bindMac", label: "绑定MAC", value: '0', options: [{ id: '1', value: "是" }, { id: '0', value: "否" }] },
-                        { view: "radio", name: "bindVlan", label: "绑定VLAN", value: '0', options: [{ id: '1', value: "是" }, { id: '0', value: "否" }] },
-                        { view: "text", name: "upRate", label: "上行速率(Mbps)", validate:webix.rules.isNumber},
-                        { view: "text", name: "downRate", label: "下行速率(Mbps)", validate:webix.rules.isNumber}
+                        { view:"textarea", name:"remark", height:100, label:"描述"},
                     ]
                 },
                 {
@@ -385,17 +353,14 @@ toughsocks.admin.user.batchOpenUserForm = function(session){
                     scroll: 'y',
                     elementsConfig: { labelWidth: 110 },
                     elements: [
+                        { view: "richselect", name: "groupId", label: "用户组(*)", icon: "caret-down", validate:webix.rules.isNotEmpty,
+                            options: {view:"suggest",url:"/admin/group/options"}
+                        },
                         { view: "text", name: "userPrefix", label: "帐号前缀", validate:webix.rules.isNotEmpty },
                         { view: "counter", name: "openNum", label: "数量", placeholder: "数量（最大1000）", value: 10, min: 10, max: 1000},
                         { view: "radio", name: "randPasswd", label: "密码类型 ", value: '0', options: [{ id: '1', value: "随机" }, { id: '0', value: "固定" }] },
                         { view: "text", name: "password", label: "固定密码"},
                         { view: "datepicker", name: "expireTime", label: "过期时间", stringResult:true, timepicker: true, format: "%Y-%m-%d %h:%i", validate:webix.rules.isNotEmpty },
-                        { view: "text", name: "addrPool", label: "地址池" },
-                        { view: "counter", name: "activeNum", label: "最大在线", placeholder: "最大在线", value: 1, min: 1, max: 99999},
-                        { view: "radio", name: "bindMac", label: "绑定MAC", value: '0', options: [{ id: '1', value: "是" }, { id: '0', value: "否" }] },
-                        { view: "radio", name: "bindVlan", label: "绑定VLAN", value: '0', options: [{ id: '1', value: "是" }, { id: '0', value: "否" }] },
-                        { view: "text", name: "upRate", label: "上行速率(Mbps)", validate:webix.rules.isNumber},
-                        { view: "text", name: "downRate", label: "下行速率(Mbps)", validate:webix.rules.isNumber}
                     ]
                 },
                 {
@@ -440,8 +405,8 @@ toughsocks.admin.user.batchOpenUserForm = function(session){
 
 
 
-toughsocks.admin.user.subscribeUpdate = function(session,item,callback){
-    var updateWinid = "toughsocks.admin.user.subscribeUpdate";
+toughsocks.admin.user.userUpdate = function(session,item,callback){
+    var updateWinid = "toughsocks.admin.user.userUpdate";
     if($$(updateWinid))
         return;
     var formid = updateWinid+"_form";
@@ -485,29 +450,19 @@ toughsocks.admin.user.subscribeUpdate = function(session,item,callback){
                     paddingX:10,
                     elements: [
                         { view: "text", name: "id",  hidden: true, value: subs.id },
-                        { view: "text", name: "subscriber", label: "帐号", css: "nborder-input", readonly: true, value: subs.subscriber , validate:webix.rules.isNotEmpty},
+                        { view: "text", name: "username", label: "帐号", css: "nborder-input", readonly: true, value: subs.username , validate:webix.rules.isNotEmpty},
                         { view: "text", name: "realname", label: "姓名",value: subs.realname , validate:webix.rules.isNotEmpty},
-                        { view: "radio", name: "status", label: "状态", value: subs.status, options: [{ id: 'enabled', value: "正常" }, { id: 'disabled', value: "停用" }] },
+                        { view: "text", name: "email", label: "电子邮箱",value: subs.email},
+                        { view: "text", name: "mobile", label: "电话",value: subs.mobile},
+                        { view: "radio", name: "status", label: "状态", value: subs.status, options: [{ id: '1', value: "正常" }, { id: '0', value: "停用" }] },
                         {
                             view: "datepicker", name: "expireTime", timepicker: true, value:subs.expireTime,
                             label: "过期时间", stringResult: true,  format: "%Y-%m-%d %h:%i", validate: webix.rules.isNotEmpty
                         },
-                        { view: "text", name: "addrPool", label: "地址池",  value: subs.addrPool },
-                        { view: "radio", name: "bindMac", label: "绑定MAC", value: subs.bindMac?'1':'0', options: [{ id: '1', value: "是" }, { id: '0', value: "否" }] },
-                        { view: "radio", name: "bindVlan", label: "绑定VLAN", value: subs.bindVlan?'1':'0', options: [{ id: '1', value: "是" }, { id: '0', value: "否" }] },
-                        { view: "text", name: "macAddr", label: "MAc地址",  value: subs.macAddr },
-                        { view: "text", name: "ipAddr", label: "固定IP地址",  value: subs.ipAddr },
-                        { view: "text", name: "inVlan", label: "内层VLAN",  value: subs.inVlan },
-                        { view: "text", name: "outVlan", label: "外层VLAN",  value: subs.outVlan },
-                        { view: "text", name: "upRate", label: "上行速率(Mbps)",  value: subs.upRate},
-                        { view: "text", name: "downRate", label: "下行速率(Mbps)",  value: subs.downRate},
-                        { view: "text", name: "upPeakRate", label: "突发上行速率(Mbps)",  value: subs.upPeakRate, validate:webix.rules.isNumber},
-                        { view: "text", name: "downPeakRate", label: "突发下行速率(Mbps)",  value: subs.downPeakRate, validate:webix.rules.isNumber},
-                        { view: "counter", name: "activeNum", label: "最大在线", placeholder: "最大在线", value: subs.activeNum, min: 1, max: 99999},
-                        { view: "text", name: "upRateCode", label: "上行速率策略",  value: subs.upRateCode},
-                        { view: "text", name: "downRateCode", label: "下行速率策略",  value: subs.downRateCode},
-                        { view: "text", name: "domain", label: "认证域", value: subs.domain},
-                        { view: "text", name: "policy", label: "自定义策略", value:subs.policy},
+                        { view: "radio", name: "group_policy", label: "用户组策略", value: subs.groupPolicy, options: [{ id: '0', value: "否" }, { id: '1', value: "是" }] },
+                        { view: "text", name: "maxSession", label: "最大连接数",  value: subs.maxSession },
+                        { view: "text", name: "upLimit", label: "上行限速",  value: subs.upLimit },
+                        { view: "text", name: "downLimit", label: "下行限速",  value: subs.downLimit },
                         {
                             cols:[
                                 { view: "textarea", name: "remark", label: "备注",value: subs.remark, height: 80 }
@@ -554,47 +509,37 @@ toughsocks.admin.user.userUppwd = function(session,item,callback){
     if($$(winid))
         return;
     var formid = winid+"_form";
-    webix.ajax().get('/admin/user/detail', {id:item.id}).then(function (result) {
-        var resp = result.json();
-        if(resp.code>0){
-            webix.message({ type: resp.msgtype, text: resp.msg, expire: 3000 });
-            return;
-        }
-        var subs = resp.data;
-        webix.ui({
-            id:winid,
-            view: "window",
-            css:"win-body",
-            move:true,
-            width:360,
-            height:480,
-            position: "center",
-            head: {
-                view: "toolbar",
-                css:"win-toolbar",
+    webix.ui({
+        id:winid,
+        view: "window",
+        css:"win-body",
+        move:true,
+        width:360,
+        height:480,
+        position: "center",
+        head: {
+            view: "toolbar",
+            css:"win-toolbar",
 
-                cols: [
-                    {view: "icon", icon: "laptop", css: "alter"},
-                    {view: "label", label: "帐号密码修改"},
-                    {view: "icon", icon: "times-circle", css: "alter", click: function(){
+            cols: [
+                {view: "icon", icon: "laptop", css: "alter"},
+                {view: "label", label: "帐号密码修改"},
+                {view: "icon", icon: "times-circle", css: "alter", click: function(){
                         $$(winid).close();
                     }}
-                ]
-            },
-            body:{
-                borderless: true,
-                padding:5,
-                rows:[
+            ]
+        },
+        body:{
+            borderless: true,
+            padding:5,
+            rows:[
                 {
                     id: formid,
                     view: "form",
                     scroll: "auto",
                     elementsConfig: { labelWidth: 120 },
                     elements: [
-                        { view: "text", name: "id",  hidden: true, value: subs.id },
-                        { view: "text", name: "subscriber", label: "订阅帐号", css: "nborder-input", readonly: true, value: subs.subscriber },
-                        { view: "text", name: "oldpassword", label: "当前密码", css: "nborder-input", readonly: true, value: subs.password },
-                        { view: "text", name: "expire_time", label: "过期时间", css: "nborder-input", readonly: true, value: subs.expireTime },
+                        { view: "text", name: "id",  hidden: true, value: item.id },
                         { view: "text", name: "password", type: "password", label: "新密码(*)", placeholder: "新密码", validate: webix.rules.isNotEmpty },
                         { view: "text", name: "cpassword", type: "password", label: "确认新密码(*)", placeholder: "确认新密码", validate: webix.rules.isNotEmpty }
                     ]
@@ -618,22 +563,21 @@ toughsocks.admin.user.userUppwd = function(session,item,callback){
                                     webix.message({ type: resp.msgtype, text: resp.msg, expire: 3000 });
                                     if (resp.code === 0) {
                                         toughsocks.admin.user.reloadData();
-                                         $$(winid).close();
+                                        $$(winid).close();
                                     }
                                 });
                             }
                         },
                         {
                             view: "button", type: "base", icon: "times-circle", width: 70, css: "alter", label: "关闭", click: function () {
-                                 $$(winid).close();
+                                $$(winid).close();
                             }
                         }
                     ]
                 }
             ]
-            }
-        }).show(0)
-    })
+        }
+    }).show(0)
 };
 
 

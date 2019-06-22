@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.toughsocks.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="org.toughsocks.entity.User">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="group_id" jdbcType="BIGINT" property="groupId" />
+        <result column="group_policy" jdbcType="VARCHAR" property="groupPolicy" />
+        <result column="realname" jdbcType="VARCHAR" property="realname" />
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="policy" jdbcType="VARCHAR" property="policy" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="up_limit" jdbcType="INTEGER" property="upLimit" />
+        <result column="down_limit" jdbcType="INTEGER" property="downLimit" />
+        <result column="max_session" jdbcType="INTEGER" property="maxSession" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		id,
+		group_id,
+		group_policy,
+		realname,
+		username,
+		password,
+		mobile,
+		email,
+		remark,
+		status,
+		up_limit,
+		down_limit,
+		max_session,
+		create_time,
+		expire_time,
+		update_time
+	</sql>
+
+    <select id="findAllUsername"  resultType="java.lang.String" useCache="false">
+		SELECT username FROM ts_user WHERE status = 1
+	</select>
+
+
+    <select id="findById"  resultType="java.lang.Long" resultMap="BaseResultMap" useCache="false">
+        SELECT <include refid="Base_Column_List" /> FROM ts_user WHERE id = #{id}
+    </select>
+
+    <select id="findLastUpdateUser" parameterType="java.lang.String"  resultMap="BaseResultMap" useCache="false">
+		<![CDATA[
+		SELECT username, update_time FROM ts_user
+		WHERE update_time >= #{lastUpdate}
+		]]>
+	</select>
+
+    <select id="findUser" resultMap="BaseResultMap" useCache="false">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM  ts_user WHERE username=#{username}
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+		delete from ts_user where id = #{id}
+	</delete>
+
+
+    <sql id="query_where">
+        <where>
+            <if test="groupId != null  and groupId != '' "> and group_id = #{groupId}</if>
+            <if test="groupPolicy != null  and groupPolicy != '' "> and group_policy = #{groupPolicy}</if>
+            <if test="username != null  and username != '' "> and username = #{username}</if>
+            <if test="realname != null  and realname != '' "> and realname = #{realname}</if>
+            <if test="mobile != null  and mobile != '' "> and mobile = #{mobile}</if>
+            <if test="email != null  and email != '' "> and email = #{email}</if>
+            <if test="status != null  and status != '' "> and status = #{status}</if>
+            <if test="upLimit != null  and upLimit != '' "> and up_limit = #{upLimit}</if>
+            <if test="downLimit != null  and downLimit != '' "> and down_limit = #{downLimit}</if>
+            <if test="maxSession != null  and maxSession != '' "> and max_session = #{maxSession}</if>
+            <if test="keyword != null  and keyword != '' "> and username like CONCAT('%',#{keyword},'%')</if>
+            <if test="expireTime != null and expireTime != '' "> and expire_time &lt;= #{expireTime}</if>
+            <if test="remark != null  and remark != '' "> and remark like CONCAT('%',#{remark},'%') </if>
+        </where>
+    </sql>
+
+    <select id="queryTotal" parameterType="org.toughsocks.form.UserQuery" resultType="integer" useCache="false">
+        SELECT count(*) FROM  ts_user
+        <include refid="query_where" />
+    </select>
+
+    <select id="queryForList" parameterType="org.toughsocks.form.UserQuery" resultMap="BaseResultMap" useCache="false">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM  ts_user
+        <include refid="query_where" />
+    </select>
+
+    <insert id="insertUser" parameterType="org.toughsocks.entity.User">
+        insert into ts_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''  ">id,</if>
+            <if test="groupId != null  and groupId != ''  ">group_id,</if>
+            <if test="groupPolicy != null  and groupPolicy != ''  ">group_policy,</if>
+            <if test="realname != null  and realname != ''  ">realname,</if>
+            <if test="username != null  and username != ''  ">username,</if>
+            <if test="password != null  and password != ''  ">password,</if>
+            <if test="mobile != null  and mobile != ''  ">mobile,</if>
+            <if test="email != null  and email != ''  ">email,</if>
+            <if test="status != null  and status != ''  ">status,</if>
+            <if test="remark != null  and remark != ''  ">remark,</if>
+            <if test="upLimit != null  and upLimit != ''  ">up_limit,</if>
+            <if test="downLimit != null  and downLimit != ''  ">down_limit,</if>
+            <if test="maxSession != null  and maxSession != ''  ">max_session,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="expireTime != null ">expire_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''  ">#{id},</if>
+            <if test="groupId != null  and groupId != ''  ">#{groupId},</if>
+            <if test="groupPolicy != null  and groupPolicy != ''  ">#{groupPolicy},</if>
+            <if test="realname != null  and realname != ''  ">#{realname},</if>
+            <if test="username != null  and username != ''  ">#{username},</if>
+            <if test="password != null  and password != ''  ">#{password},</if>
+            <if test="mobile != null  and mobile != ''  ">#{mobile},</if>
+            <if test="email != null  and email != ''  ">#{email},</if>
+            <if test="status != null  and status != ''  ">#{status},</if>
+            <if test="remark != null  and remark != ''  ">#{remark},</if>
+            <if test="upLimit != null  and upLimit != ''  ">#{upLimit},</if>
+            <if test="downLimit != null  and downLimit != ''  ">#{downLimit},</if>
+            <if test="maxSession != null  and maxSession != ''  ">#{maxSession},</if>
+            <if test="createTime != null   ">#{createTime},</if>
+            <if test="expireTime != null   ">#{expireTime},</if>
+            <if test="updateTime != null   ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <select id="updateUser" parameterType="org.toughsocks.entity.User" useCache="false">
+        update ts_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="groupId != null  and groupId != ''  ">group_id = #{groupId},</if>
+            <if test="groupPolicy != null  and groupPolicy != ''  ">group_policy = #{groupPolicy},</if>
+            <if test="realname != null  and realname != ''  ">realname = #{realname},</if>
+            <if test="username != null  and username != ''  ">username = #{username},</if>
+            <if test="password != null  and password != ''  ">password = #{password},</if>
+            <if test="mobile != null ">mobile = #{mobile},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="remark != null ">remark = #{remark},</if>
+            <if test="upLimit != null  ">up_limit = #{upLimit},</if>
+            <if test="downLimit != null ">down_limit = #{downLimit},</if>
+            <if test="maxSession != null ">max_session = #{maxSession},</if>
+            <if test="expireTime != null ">expire_time = #{expireTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </select>
+
+    <select id="updatePassword" useCache="false">
+		update ts_user set password =  #{password}, update_time = NOW() where id = #{id}
+	</select>
+
+
+</mapper>

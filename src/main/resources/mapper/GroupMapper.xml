@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.toughsocks.mapper.GroupMapper">
+
+    <resultMap id="BaseResultMap" type="org.toughsocks.entity.Group">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="up_limit" jdbcType="INTEGER" property="upLimit" />
+        <result column="down_limit" jdbcType="INTEGER" property="downLimit" />
+        <result column="max_session" jdbcType="INTEGER" property="maxSession" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		id, `name`,status, up_limit, down_limit, max_session, remark
+	</sql>
+
+    <select id="queryForList" parameterType="org.toughsocks.entity.Group" resultMap="BaseResultMap" useCache="true">
+        select
+        <include refid="Base_Column_List" />
+        from ts_group
+        <where>
+            <if test="name != null  and name != '' "> and name = #{name}</if>
+            <if test="upLimit != null  and upLimit != '' "> and up_limit = #{upLimit}</if>
+            <if test="downLimit != null  and downLimit != '' "> and down_limit = #{downLimit}</if>
+            <if test="maxSession != null  and maxSession != '' "> and max_session = #{maxSession}</if>
+            <if test="remark != null  and remark != '' "> and remark like CONCAT('%',#{remark},'%') </if>
+        </where>
+    </select>
+
+    <insert id="insertGroup" parameterType="org.toughsocks.entity.Group" flushCache="true">
+        insert into ts_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''  ">id,</if>
+            <if test="name != null  and name != ''  ">name,</if>
+            <if test="upLimit != null  and upLimit != ''  ">up_limit,</if>
+            <if test="downLimit != null  and downLimit != ''  ">down_limit,</if>
+            <if test="maxSession != null  and maxSession != ''  ">max_session,</if>
+            <if test="remark != null  and remark != ''  ">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''  ">#{id},</if>
+            <if test="name != null  and name != ''  ">#{name},</if>
+            <if test="upLimit != null  and upLimit != ''  ">#{upLimit},</if>
+            <if test="downLimit != null  and downLimit != ''  ">#{downLimit},</if>
+            <if test="maxSession != null  and maxSession != ''  ">#{maxSession},</if>
+            <if test="remark != null  and remark != ''  ">#{remark},</if>
+        </trim>
+    </insert>
+
+    <select id="updateGroup" parameterType="org.toughsocks.entity.Group" flushCache="true">
+        update ts_group
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+            <if test="status != null  and status != ''  ">status = #{status},</if>
+            <if test="upLimit != null  and upLimit != ''  ">up_limit = #{upLimit},</if>
+            <if test="downLimit != null  and downLimit != ''  ">down_limit = #{downLimit},</if>
+            <if test="maxSession != null  and maxSession != ''  ">max_session = #{maxSession},</if>
+            <if test="remark != null ">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+		delete from ts_group where id = #{id}
+	</delete>
+
+    <select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap" useCache="false">
+        select
+        <include refid="Base_Column_List" />
+        from ts_group
+        where id=#{id}
+    </select>
+
+
+</mapper>

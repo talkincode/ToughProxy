@@ -7,10 +7,14 @@ import org.toughsocks.entity.User;
 public class UserForm {
 
     private Long id;
+    private Long groupId;
     private String username;
+    private String realname;
+    private String email;
+    private String mobile;
     private String password;
     private String cpassword;
-    private String status;
+    private Integer status;
     private String beginTime;
     private String expireTime;
     private String createTime;
@@ -27,6 +31,14 @@ public class UserForm {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public String getUsername() {
@@ -53,11 +65,11 @@ public class UserForm {
         this.cpassword = cpassword;
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -125,16 +137,41 @@ public class UserForm {
         this.randPasswd = randPasswd;
     }
 
+    public String getRealname() {
+        return realname;
+    }
+
+    public void setRealname(String realname) {
+        this.realname = realname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
     public User getUserData(){
         User subs = new User();
         subs.setId(getId());
         subs.setUsername(getUsername());
-        if(ValidateUtil.isNotEmpty(getBeginTime()) && getBeginTime().length() == 16)
-            subs.setBeginTime(DateTimeUtil.toTimestamp(getBeginTime()+":00"));
         if(ValidateUtil.isNotEmpty(getExpireTime()) && getExpireTime().length() == 16)
             subs.setExpireTime(DateTimeUtil.toTimestamp(getExpireTime()+":00"));
         subs.setUpdateTime(DateTimeUtil.nowTimestamp());
         subs.setCreateTime(DateTimeUtil.nowTimestamp());
+        subs.setRealname(getRealname());
+        subs.setEmail(getEmail());
+        subs.setMobile(getMobile());
         subs.setStatus(getStatus());
         subs.setRemark(getRemark());
         subs.setPassword(getPassword());

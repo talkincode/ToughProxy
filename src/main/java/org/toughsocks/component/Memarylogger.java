@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 public class Memarylogger {
 
     public final static String TRAFFIC = "traffic";
+    public final static String SOCKS4 = "socks4";
     public final static String SOCKS5 = "socks5";
     public final static String SYSTEM = "system";
     public final static String API = "api";
@@ -33,6 +34,7 @@ public class Memarylogger {
     public Memarylogger() {
         traceMap = new ConcurrentHashMap<>();
         traceMap.put(TRAFFIC,new LoggerDeque(10000));
+        traceMap.put(SOCKS4,new LoggerDeque(10000));
         traceMap.put(SOCKS5,new LoggerDeque(10000));
         traceMap.put(SYSTEM,new LoggerDeque(10000));
         traceMap.put(API,new LoggerDeque(10000));

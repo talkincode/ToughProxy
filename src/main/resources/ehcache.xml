@@ -16,10 +16,10 @@
     -->
     <diskStore path="java.io.tmpdir"/>
     <defaultCache
-            maxElementsInMemory="65535"
+            maxElementsInMemory="655350"
             eternal="false"      
-            timeToIdleSeconds="60"
-            timeToLiveSeconds="60"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="3600"
             overflowToDisk="false"      
             diskPersistent="false"      
             diskExpiryThreadIntervalSeconds="100"      

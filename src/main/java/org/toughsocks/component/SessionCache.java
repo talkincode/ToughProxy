@@ -67,6 +67,31 @@ public class SessionCache {
         return session;
     }
 
+    /** 查询上网帐号并发数 是否超过限制， 超过预设即返回， 避免多次循环*/
+    public boolean isLimitOver(String userName, int limit)
+    {
+        if(limit==0){
+            return false;
+        }
+        int onlineNum = 0;
+        for (SocksSession session : cacheData.values()) {
+            if (userName.equals(session.getUsername())){
+                onlineNum++;
+            }
+            if (onlineNum >= limit){
+                return true;
+            }
+        }
+        return onlineNum >= limit;
+    }
+
+
+
+    public void clearExpireSession(){
+        String ctime = DateTimeUtil.getDateTimeString();
+        cacheData.values().removeIf(x-> x.getUpBytes() == 0 && x.getDownBytes() == 0 && DateTimeUtil.compareSecond(ctime,x.getStartTime())>60);
+    }
+
 
     private boolean filterSession(SocksSession online, String username,String srcAddr,Integer srcPort,String dstAddr,Integer dstPort) {
 

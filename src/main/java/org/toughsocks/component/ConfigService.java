@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.toughsocks.common.CoderUtil;
+import org.toughsocks.common.ValidateUtil;
 import org.toughsocks.config.Constant;
 import org.toughsocks.entity.Config;
 import org.toughsocks.mapper.ConfigMapper;
@@ -26,6 +27,15 @@ public class ConfigService implements Constant {
             return cfg.getValue();
         }
         return null;
+    }
+
+    public String getStringValue(String module, String name, String defval){
+        Config cfg = configMapper.findConfig(module,name);
+        if(cfg!=null){
+            String value =  cfg.getValue();
+            return ValidateUtil.isEmpty(value)?defval:value;
+        }
+        return defval;
     }
 
     public void insertConfig(Config config){

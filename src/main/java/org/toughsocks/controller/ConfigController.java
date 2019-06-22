@@ -51,9 +51,14 @@ public class ConfigController implements Constant {
      */
     @PostMapping(value = {"/api/system/update","/admin/config/system/update"})
     @ResponseBody
-    public RestResult updateRadiusConfig(SystemConfigForm form){
+    public RestResult updateSystemConfig(SystemConfigForm form){
         try{
             configService.updateConfig(new Config(SYSTEM_MODULE,SYSTEM_TICKET_HISTORY_DAYS,form.getSystemTicketHistoryDays()));
+            configService.updateConfig(new Config(SYSTEM_MODULE,SYSTEM_SOCKS_USER_AUTH_MODE,form.getSystemSocksUserAuthMode()));
+            configService.updateConfig(new Config(SYSTEM_MODULE,SYSTEM_SOCKS_RADIUS_AUTH_SERVER,form.getSystemSocksRadiusAuthServer()));
+            configService.updateConfig(new Config(SYSTEM_MODULE,SYSTEM_SOCKS_RADIUS_AUTH_PORT,form.getSystemSocksRadiusAuthPort()));
+            configService.updateConfig(new Config(SYSTEM_MODULE,SYSTEM_SOCKS_RADIUS_AUTH_SECRET,form.getSystemSocksRadiusAuthSecret()));
+            configService.updateConfig(new Config(SYSTEM_MODULE,SYSTEM_SOCKS_RADIUS_NASID,form.getSystemSocksRadiusNasid()));
         }catch(Exception e){
             logger.error("update config error",e, Memarylogger.SYSTEM);
         }

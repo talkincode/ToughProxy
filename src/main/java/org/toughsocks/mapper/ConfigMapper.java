@@ -12,10 +12,6 @@ import java.util.List;
 @Mapper
 public interface ConfigMapper {
 
-    Integer getInterimTimes();
-
-    Integer getIsCheckPwd();
-
     void insertConfig(Config config);
 
     void updateConfig(Config config);

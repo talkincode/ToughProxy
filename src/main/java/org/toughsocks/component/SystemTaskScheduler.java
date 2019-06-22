@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-import org.toughsocks.config.Socks5Config;
+import org.toughsocks.config.SocksConfig;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +25,7 @@ public class SystemTaskScheduler  {
     private ThreadPoolTaskExecutor systaskExecutor;
 
     @Autowired
-    private Socks5Config socks5Config;
+    private SocksConfig socksConfig;
 
     @Autowired
     private Memarylogger logger;
@@ -34,17 +34,20 @@ public class SystemTaskScheduler  {
     private TrafficStat trafficStat;
 
     @Autowired
-    private Socks5Stat socks5Stat;
+    private SocksStat socks5Stat;
 
     @Autowired
     private TicketCache ticketCache;
+
+    @Autowired
+    private SessionCache sessionCache;
     /**
      * 消息统计任务
      */
     @Scheduled(fixedDelay = 5000, initialDelay = 5000)
     public void updateTrafficStat(){
         systaskExecutor.execute(()->{
-            TrafficCounter trafficCounter = socks5Config.getTrafficHandler().trafficCounter();
+            TrafficCounter trafficCounter = socksConfig.getTrafficHandler().trafficCounter();
             try {
                 TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException ignore) {
@@ -74,6 +77,14 @@ public class SystemTaskScheduler  {
     @Scheduled(fixedRate = 10 * 1000)
     public void syncTicket() {
         systaskExecutor.execute(()->ticketCache.syncData());
+    }
+
+    /**
+     * 同步上网日志
+     */
+    @Scheduled(fixedRate = 30 * 1000)
+    public void clearExpire() {
+        systaskExecutor.execute(()->sessionCache.clearExpireSession());
     }
 
 
