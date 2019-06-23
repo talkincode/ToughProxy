@@ -1,54 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.toughsocks.mapper.AclMapper">
-    <resultMap id="BaseResultMap" type="org.toughsocks.entity.Acl">
+<mapper namespace="org.toughproxy.mapper.AclMapper">
+    <resultMap id="BaseResultMap" type="org.toughproxy.entity.Acl">
         <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="priority" jdbcType="INTEGER" property="priority" />
         <result column="policy" jdbcType="VARCHAR" property="policy" />
-        <result column="ipaddr" jdbcType="VARCHAR" property="ipaddr" />
+        <result column="src" jdbcType="VARCHAR" property="src" />
+        <result column="target" jdbcType="VARCHAR" property="target" />
+        <result column="domain" jdbcType="VARCHAR" property="domain" />
     </resultMap>
 
-    <select id="queryForList" parameterType="org.toughsocks.entity.Acl" resultMap="BaseResultMap" useCache="true">
-        select id, policy, ipaddr  from ts_acl
+    <sql id="Base_Column_List">
+		id, status, priority, policy, src, target,domain, hits
+	</sql>
+
+    <select id="queryForList" parameterType="org.toughproxy.entity.Acl" resultMap="BaseResultMap" useCache="true">
+        select <include refid="Base_Column_List" />  from ts_acl
         <where>
+            <if test="status != null  and status != '' "> and status = #{status}</if>
             <if test="policy != null  and policy != '' "> and policy = #{policy}</if>
-            <if test="ipaddr != null  and ipaddr != '' "> and ipaddr = #{ipaddr}</if>
+            <if test="src != null  and src != '' "> and src = #{src}</if>
+            <if test="target != null  and target != '' "> and target = #{target}</if>
+            <if test="domain != null  and domain != '' "> and domain = #{domain}</if>
         </where>
+        order by priority asc
     </select>
 
     <select id="findById" resultMap="BaseResultMap" useCache="false">
-        select id, policy, ipaddr  from ts_acl  where id = #{id}
+        select <include refid="Base_Column_List" />  from ts_acl  where id = #{id}
     </select>
 
     <select id="findByIpaddr" resultMap="BaseResultMap" useCache="true">
-        select id, policy, ipaddr  from ts_acl  where ipaddr = #{ipaddr} limit 1
+        select <include refid="Base_Column_List" />  from ts_acl  where ipaddr = #{ipaddr} limit 1
     </select>
 
     <select id="findByPolicy" resultMap="BaseResultMap" useCache="true">
-        select id, policy, ipaddr  from ts_acl  where policy = #{policy}
+        select <include refid="Base_Column_List" />  from ts_acl  where policy = #{policy} order by priority asc
     </select>
 
-    <insert id="insertAcl" parameterType="org.toughsocks.entity.Acl" flushCache="true">
+    <insert id="insertAcl" parameterType="org.toughproxy.entity.Acl" flushCache="true">
         insert into ts_acl
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''  ">id,</if>
+            <if test="status != null  and status != ''  ">status,</if>
+            <if test="priority != null  and priority != ''  ">priority,</if>
             <if test="policy != null  and policy != ''  ">policy,</if>
-            <if test="ipaddr != null  and ipaddr != ''  ">ipaddr,</if>
+            <if test="src != null  and src != ''  ">src,</if>
+            <if test="target != null  and target != ''  ">target,</if>
+            <if test="domain != null  and domain != ''  ">domain,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''  ">#{id},</if>
+            <if test="status != null  and status != ''  ">#{status},</if>
+            <if test="priority != null  and priority != ''  ">#{priority},</if>
             <if test="policy != null  and policy != ''  ">#{policy},</if>
-            <if test="ipaddr != null  and ipaddr != ''  ">#{ipaddr},</if>
+            <if test="src != null  and src != ''  ">#{src},</if>
+            <if test="target != null  and target != ''  ">#{target},</if>
+            <if test="domain != null  and domain != ''  ">#{domain},</if>
         </trim>
     </insert>
 
-    <select id="updateAclPolicy" flushCache="true">
-        update ts_acl set policy = #{policy} where id = #{id}
-    </select>
+    <update id="updateAcl" parameterType="org.toughproxy.entity.Acl" flushCache="true">
+        update ts_acl
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="policy != null  and policy != ''  ">policy = #{policy},</if>
+            <if test="status != null  and status != ''  ">status = #{status},</if>
+            <if test="priority != null  and priority != ''  ">priority = #{priority},</if>
+            <if test="src != null  ">src = #{src},</if>
+            <if test="target != null ">target = #{target},</if>
+            <if test="domain != null  ">domain = #{domain},</if>
+        </trim>
+        where id = #{id}
+    </update>
 
-
-    <delete id="deleteByIpaddr" parameterType="java.lang.String" flushCache="true">
-        delete from ts_acl where ipaddr = #{ipaddr}
-    </delete>
+    <update id="updateAclHits"  flushCache="false">
+        update ts_acl set hits=hits+1 where id = #{id}
+    </update>
 
     <delete id="deleteById" parameterType="java.lang.Long" flushCache="true">
         delete from ts_acl where id = #{id}

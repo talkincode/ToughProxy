@@ -1,12 +1,12 @@
-if (!window.toughsocks.admin.user)
-    toughsocks.admin.user={};
+if (!window.toughproxy.admin.user)
+    toughproxy.admin.user={};
 
 
-toughsocks.admin.user.dataViewID = "toughsocks.admin.user.dataViewID";
-toughsocks.admin.user.loadPage = function(session,keyword){
+toughproxy.admin.user.dataViewID = "toughproxy.admin.user.dataViewID";
+toughproxy.admin.user.loadPage = function(session,keyword){
     var tableid = webix.uid();
     var queryid = webix.uid();
-    toughsocks.admin.user.reloadData = function(){
+    var reloadData = function(){
         $$(tableid).refresh();
         $$(tableid).clearAll();
         var params = $$(queryid).getValues();
@@ -15,16 +15,14 @@ toughsocks.admin.user.loadPage = function(session,keyword){
             args.push(k+"="+params[k]);
         }
         $$(tableid).load('/admin/user/query?'+args.join("&"));
-    }
-
-    var reloadData = toughsocks.admin.user.reloadData;
+    };
 
     var cview = {
-        id: "toughsocks.admin.user",
+        id: "toughproxy.admin.user",
         css:"main-panel",padding:10,
         rows:[
             {
-                id:toughsocks.admin.user.dataViewID,
+                id:toughproxy.admin.user.dataViewID,
                 rows:[
                     {
                         view: "toolbar",
@@ -33,19 +31,23 @@ toughsocks.admin.user.loadPage = function(session,keyword){
                         cols: [
                             {
                                 view: "button", type: "form", width: 70, icon: "plus", label: "创建用户", click: function () {
-                                    toughsocks.admin.user.OpenUserForm(session);
+                                    toughproxy.admin.user.OpenUserForm(session,function () {
+                                        reloadData();
+                                    });
                                 }
                             },
                             {
                                 view: "button", type: "form", width: 70, icon: "plus", label: "批量创建", click: function () {
-                                    toughsocks.admin.user.batchOpenUserForm(session);
+                                    toughproxy.admin.user.batchOpenUserForm(session,function () {
+                                        reloadData();
+                                    });
                                 }
                             },
                             {
                                 view: "button", type: "form", width: 55, icon: "key", label: "改密码", click: function () {
                                     var item = $$(tableid).getSelectedItem();
                                     if (item) {
-                                        toughsocks.admin.user.userUppwd(session, item, function () {
+                                        toughproxy.admin.user.userUppwd(session, item, function () {
                                             reloadData();
                                         });
                                     } else {
@@ -67,7 +69,7 @@ toughsocks.admin.user.loadPage = function(session,keyword){
                                     if (rows.length === 0) {
                                         webix.message({ type: 'error', text: "请至少勾选一项", expire: 1500 });
                                     } else {
-                                        toughsocks.admin.user.userDelete(rows.join(","), function () {
+                                        toughproxy.admin.user.userDelete(rows.join(","), function () {
                                             reloadData();
                                         });
                                     }
@@ -180,7 +182,7 @@ toughsocks.admin.user.loadPage = function(session,keyword){
                                 },
                                 onClick: {
                                     do_update: function(e, id){
-                                        toughsocks.admin.user.userUpdate(session, this.getItem(id), function () {
+                                        toughproxy.admin.user.userUpdate(session, this.getItem(id), function () {
                                             reloadData();
                                         });
                                     }
@@ -215,12 +217,12 @@ toughsocks.admin.user.loadPage = function(session,keyword){
                 ]
             },
             {
-                id: toughsocks.admin.user.detailFormID,
+                id: toughproxy.admin.user.detailFormID,
                 hidden:true
             }
         ]
     };
-    toughsocks.admin.methods.addTabView("toughsocks.admin.user","user-o","用户管理", cview, true);
+    toughproxy.admin.methods.addTabView("toughproxy.admin.user","user-o","用户管理", cview, true);
     webix.extend($$(tableid), webix.ProgressBar);
 };
 
@@ -230,8 +232,8 @@ toughsocks.admin.user.loadPage = function(session,keyword){
  * @param session
  * @constructor
  */
-toughsocks.admin.user.OpenUserForm = function(session){
-    var winid = "toughsocks.admin.user.OpenUserForm";
+toughproxy.admin.user.OpenUserForm = function(session,callback){
+    var winid = "toughproxy.admin.user.OpenUserForm";
     if($$(winid))
         return;
     var formid = winid+"_form";
@@ -295,7 +297,7 @@ toughsocks.admin.user.OpenUserForm = function(session){
                                     var resp = result.json();
                                     webix.message({ type: resp.msgtype, text: resp.msg, expire: 3000 });
                                     if (resp.code === 0) {
-                                        toughsocks.admin.user.reloadData();
+                                        callback();
                                         $$(winid).close();
                                     }
                                 });
@@ -320,8 +322,8 @@ toughsocks.admin.user.OpenUserForm = function(session){
  * @param session
  * @constructor
  */
-toughsocks.admin.user.batchOpenUserForm = function(session){
-    var winid = "toughsocks.admin.user.batchOpenUserForm";
+toughproxy.admin.user.batchOpenUserForm = function(session,callback){
+    var winid = "toughproxy.admin.user.batchOpenUserForm";
     if($$(winid))
         return;
     var formid = winid+"_form";
@@ -383,7 +385,7 @@ toughsocks.admin.user.batchOpenUserForm = function(session){
                                     var resp = result.json();
                                     webix.message({ type: resp.msgtype, text: resp.msg, expire: 3000 });
                                     if (resp.code === 0) {
-                                        toughsocks.admin.user.reloadData();
+                                        callback();
                                         $$(winid).close();
                                     }
                                 });
@@ -405,8 +407,8 @@ toughsocks.admin.user.batchOpenUserForm = function(session){
 
 
 
-toughsocks.admin.user.userUpdate = function(session,item,callback){
-    var updateWinid = "toughsocks.admin.user.userUpdate";
+toughproxy.admin.user.userUpdate = function(session,item,callback){
+    var updateWinid = "toughproxy.admin.user.userUpdate";
     if($$(updateWinid))
         return;
     var formid = updateWinid+"_form";
@@ -489,8 +491,8 @@ toughsocks.admin.user.userUpdate = function(session,item,callback){
                                     var resp = result.json();
                                     webix.message({ type: resp.msgtype, text: resp.msg, expire: 3000 });
                                     if (resp.code === 0) {
-                                        toughsocks.admin.user.reloadData();
-                                         $$(updateWinid).close();
+                                        callback();
+                                        $$(updateWinid).close();
                                     }
                                 });
                             }
@@ -504,8 +506,8 @@ toughsocks.admin.user.userUpdate = function(session,item,callback){
     })
 };
 
-toughsocks.admin.user.userUppwd = function(session,item,callback){
-    var winid = "toughsocks.admin.user.userUppwd";
+toughproxy.admin.user.userUppwd = function(session,item,callback){
+    var winid = "toughproxy.admin.user.userUppwd";
     if($$(winid))
         return;
     var formid = winid+"_form";
@@ -562,7 +564,7 @@ toughsocks.admin.user.userUppwd = function(session,item,callback){
                                     var resp = result.json();
                                     webix.message({ type: resp.msgtype, text: resp.msg, expire: 3000 });
                                     if (resp.code === 0) {
-                                        toughsocks.admin.user.reloadData();
+                                        callback();
                                         $$(winid).close();
                                     }
                                 });
@@ -582,7 +584,7 @@ toughsocks.admin.user.userUppwd = function(session,item,callback){
 
 
 
-toughsocks.admin.user.userDelete = function (ids,callback) {
+toughproxy.admin.user.userDelete = function (ids,callback) {
     webix.confirm({
         title: "操作确认",
         ok: "是", cancel: "否",

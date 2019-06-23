@@ -8,11 +8,11 @@
         <version>2.1.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.toughsocks</groupId>
-    <artifactId>toughsocks</artifactId>
+    <groupId>com.toughproxy</groupId>
+    <artifactId>toughproxy</artifactId>
     <version>latest</version>
-    <name>toughsocks</name>
-    <description>toughsocks</description>
+    <name>toughproxy</name>
+    <description>toughproxy</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -69,10 +69,6 @@
             <artifactId>netty-all</artifactId>
             <version>4.1.36.Final</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>SpringBoot-netty</groupId>-->
-            <!--<artifactId>SpringBoot-netty</artifactId>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
@@ -102,7 +98,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>org.toughsocks.ToughsocksApplication</mainClass>
+                    <mainClass>org.toughproxy.ToughProxyApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

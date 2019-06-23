@@ -1,8 +1,8 @@
 package org.tinyradius.util;
 
 
-import org.toughsocks.common.CoderUtil;
-import org.toughsocks.common.bits.NetBits;
+import org.toughproxy.common.CoderUtil;
+import org.toughproxy.common.bits.NetBits;
 
 import java.io.UnsupportedEncodingException;
 import java.net.Inet4Address;

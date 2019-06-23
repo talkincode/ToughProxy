@@ -1,8 +1,8 @@
-if (!window.toughsocks.admin.session)
-    toughsocks.admin.session={};
+if (!window.toughproxy.admin.session)
+    toughproxy.admin.session={};
 
 
-toughsocks.admin.session.loadPage = function(session){
+toughproxy.admin.session.loadPage = function(session){
     var tableid = webix.uid();
     var queryid = webix.uid();
     var reloadData = function(){
@@ -35,7 +35,7 @@ toughsocks.admin.session.loadPage = function(session){
         })
     };
     var cview = {
-        id:"toughsocks.admin.session",
+        id:"toughproxy.admin.session",
         css:"main-panel",padding:10,
         rows: [
             {
@@ -150,7 +150,7 @@ toughsocks.admin.session.loadPage = function(session){
             }
         ]
     };
-    toughsocks.admin.methods.addTabView("toughsocks.admin.session","users","连接查询", cview, true);
+    toughproxy.admin.methods.addTabView("toughproxy.admin.session","link","连接查询", cview, true);
     webix.extend($$(tableid), webix.ProgressBar);
 };
 

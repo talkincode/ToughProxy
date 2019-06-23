@@ -1,10 +1,10 @@
-if (!window.toughsocks.admin.config)
-    toughsocks.admin.config={};
+if (!window.toughproxy.admin.config)
+    toughproxy.admin.config={};
 
 
-toughsocks.admin.config.loadPage = function(session){
+toughproxy.admin.config.loadPage = function(session){
     var cview = {
-        id:"toughsocks.admin.config",
+        id:"toughproxy.admin.config",
         css:"main-panel",
         padding:10,
         // borderless:true,
@@ -192,7 +192,7 @@ toughsocks.admin.config.loadPage = function(session){
 
 
     };
-    toughsocks.admin.methods.addTabView("toughsocks.admin.config","cogs","系统配置", cview, true);
+    toughproxy.admin.methods.addTabView("toughproxy.admin.config","cogs","系统配置", cview, true);
 };
 
 

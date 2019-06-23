@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.toughsocks.mapper.UserMapper">
+<mapper namespace="org.toughproxy.mapper.UserMapper">
 
-    <resultMap id="BaseResultMap" type="org.toughsocks.entity.User">
+    <resultMap id="BaseResultMap" type="org.toughproxy.entity.User">
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="group_id" jdbcType="BIGINT" property="groupId" />
         <result column="group_policy" jdbcType="VARCHAR" property="groupPolicy" />
@@ -20,6 +20,10 @@
         <result column="up_limit" jdbcType="INTEGER" property="upLimit" />
         <result column="down_limit" jdbcType="INTEGER" property="downLimit" />
         <result column="max_session" jdbcType="INTEGER" property="maxSession" />
+        <result column="group_status" jdbcType="INTEGER" property="groupStatus" />
+        <result column="group_up_limit" jdbcType="INTEGER" property="groupUpLimit" />
+        <result column="group_down_limit" jdbcType="INTEGER" property="groupDownLimit" />
+        <result column="group_max_session" jdbcType="INTEGER" property="groupMaxSession" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
@@ -66,6 +70,33 @@
         FROM  ts_user WHERE username=#{username}
     </select>
 
+    <select id="findGUser" resultMap="BaseResultMap" useCache="false">
+        SELECT
+		tu.id,
+		tu.group_id,
+		tu.group_policy,
+		tu.realname,
+		tu.username,
+		tu.password,
+		tu.mobile,
+		tu.email,
+		tu.remark,
+		tu.status,
+		tu.up_limit,
+		tu.down_limit,
+		tu.max_session,
+		tg.status as group_status,
+		tg.up_limit as group_up_limit,
+		tg.down_limit as group_down_limit,
+		tg.max_session as group_max_session,
+		tu.create_time,
+		tu.expire_time,
+		tu.update_time
+        FROM  ts_user tu, ts_group tg
+        WHERE tu.group_id = tg.id
+        and tu.username=#{username}
+    </select>
+
     <delete id="deleteById" parameterType="java.lang.Long">
 		delete from ts_user where id = #{id}
 	</delete>
@@ -89,19 +120,19 @@
         </where>
     </sql>
 
-    <select id="queryTotal" parameterType="org.toughsocks.form.UserQuery" resultType="integer" useCache="false">
+    <select id="queryTotal" parameterType="org.toughproxy.form.UserQuery" resultType="integer" useCache="false">
         SELECT count(*) FROM  ts_user
         <include refid="query_where" />
     </select>
 
-    <select id="queryForList" parameterType="org.toughsocks.form.UserQuery" resultMap="BaseResultMap" useCache="false">
+    <select id="queryForList" parameterType="org.toughproxy.form.UserQuery" resultMap="BaseResultMap" useCache="false">
         SELECT
         <include refid="Base_Column_List" />
         FROM  ts_user
         <include refid="query_where" />
     </select>
 
-    <insert id="insertUser" parameterType="org.toughsocks.entity.User">
+    <insert id="insertUser" parameterType="org.toughproxy.entity.User">
         insert into ts_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''  ">id,</if>
@@ -141,7 +172,7 @@
         </trim>
     </insert>
 
-    <select id="updateUser" parameterType="org.toughsocks.entity.User" useCache="false">
+    <select id="updateUser" parameterType="org.toughproxy.entity.User" useCache="false">
         update ts_user
         <trim prefix="SET" suffixOverrides=",">
             <if test="groupId != null  and groupId != ''  ">group_id = #{groupId},</if>

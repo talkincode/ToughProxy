@@ -1,12 +1,12 @@
-if (!window.toughsocks.admin.group)
-    toughsocks.admin.group={};
+if (!window.toughproxy.admin.group)
+    toughproxy.admin.group={};
 
 
-toughsocks.admin.group.dataViewID = "toughsocks.admin.group.dataViewID";
-toughsocks.admin.group.loadPage = function(session,keyword){
+toughproxy.admin.group.dataViewID = "toughproxy.admin.group.dataViewID";
+toughproxy.admin.group.loadPage = function(session,keyword){
     var tableid = webix.uid();
     var queryid = webix.uid();
-    toughsocks.admin.group.reloadData = function(){
+    var reloadData = function(){
         $$(tableid).refresh();
         $$(tableid).clearAll();
         var params = $$(queryid).getValues();
@@ -17,14 +17,12 @@ toughsocks.admin.group.loadPage = function(session,keyword){
         $$(tableid).load('/admin/group/query?'+args.join("&"));
     };
 
-    var reloadData = toughsocks.admin.group.reloadData;
-
     var cview = {
-        id: "toughsocks.admin.group",
+        id: "toughproxy.admin.group",
         css:"main-panel",padding:10,
         rows:[
             {
-                id:toughsocks.admin.group.dataViewID,
+                id:toughproxy.admin.group.dataViewID,
                 rows:[
                     {
                         view: "toolbar",
@@ -33,7 +31,9 @@ toughsocks.admin.group.loadPage = function(session,keyword){
                         cols: [
                             {
                                 view: "button", type: "form", width: 70, icon: "plus", label: "创建组", click: function () {
-                                    toughsocks.admin.group.newGroupForm(session);
+                                    toughproxy.admin.group.newGroupForm(session,function () {
+                                        reloadData();
+                                    });
                                 }
                             },
                             {
@@ -51,7 +51,7 @@ toughsocks.admin.group.loadPage = function(session,keyword){
                                     if (rows.length === 0) {
                                         webix.message({ type: 'error', text: "请至少勾选一项", expire: 1500 });
                                     } else {
-                                        toughsocks.admin.group.grpDelete(rows.join(","), function () {
+                                        toughproxy.admin.group.grpDelete(rows.join(","), function () {
                                             reloadData();
                                         });
                                     }
@@ -142,7 +142,7 @@ toughsocks.admin.group.loadPage = function(session,keyword){
                                 },
                                 onClick: {
                                     do_update: function(e, id){
-                                        toughsocks.admin.group.grpUpdate(session, this.getItem(id), function () {
+                                        toughproxy.admin.group.grpUpdate(session, this.getItem(id), function () {
                                             reloadData();
                                         });
                                     }
@@ -177,12 +177,12 @@ toughsocks.admin.group.loadPage = function(session,keyword){
                 ]
             },
             {
-                id: toughsocks.admin.group.detailFormID,
+                id: toughproxy.admin.group.detailFormID,
                 hidden:true
             }
         ]
     };
-    toughsocks.admin.methods.addTabView("toughsocks.admin.group","user-o","访问控制", cview, true);
+    toughproxy.admin.methods.addTabView("toughproxy.admin.group","user-o","用户组", cview, true);
     webix.extend($$(tableid), webix.ProgressBar);
 };
 
@@ -192,8 +192,8 @@ toughsocks.admin.group.loadPage = function(session,keyword){
  * @param session
  * @constructor
  */
-toughsocks.admin.group.newGroupForm = function(session){
-    var winid = "toughsocks.admin.group.newGroupForm";
+toughproxy.admin.group.newGroupForm = function(session,callback){
+    var winid = "toughproxy.admin.group.newGroupForm";
     if($$(winid))
         return;
     var formid = winid+"_form";
@@ -211,7 +211,7 @@ toughsocks.admin.group.newGroupForm = function(session){
 
             cols: [
                 {view: "icon", icon: "users", css: "alter"},
-                {view: "label", label: "创建访问策略"},
+                {view: "label", label: "创建用户组"},
                 {view: "icon", icon: "times-circle", css: "alter", click: function(){
                         $$(winid).close();
                     }}
@@ -252,8 +252,8 @@ toughsocks.admin.group.newGroupForm = function(session){
                                     var resp = result.json();
                                     webix.message({ type: resp.msgtype, text: resp.msg, expire: 3000 });
                                     if (resp.code === 0) {
+                                        callback();
                                         $$(winid).close();
-                                        toughsocks.admin.group.reloadData();
 
                                     }
                                 });
@@ -275,8 +275,8 @@ toughsocks.admin.group.newGroupForm = function(session){
 
 
 
-toughsocks.admin.group.grpUpdate = function(session,item,callback){
-    var updateWinid = "toughsocks.admin.group.grpUpdate";
+toughproxy.admin.group.grpUpdate = function(session,item,callback){
+    var updateWinid = "toughproxy.admin.group.grpUpdate";
     if($$(updateWinid))
         return;
     var formid = updateWinid+"_form";
@@ -338,7 +338,7 @@ toughsocks.admin.group.grpUpdate = function(session,item,callback){
                                     var resp = result.json();
                                     webix.message({ type: resp.msgtype, text: resp.msg, expire: 3000 });
                                     if (resp.code === 0) {
-                                        toughsocks.admin.group.reloadData();
+                                        callback();
                                         $$(updateWinid).close();
                                     }
                                 });
@@ -353,7 +353,7 @@ toughsocks.admin.group.grpUpdate = function(session,item,callback){
 
 };
 
-toughsocks.admin.group.grpDelete = function (ids,callback) {
+toughproxy.admin.group.grpDelete = function (ids,callback) {
     webix.confirm({
         title: "操作确认",
         ok: "是", cancel: "否",

@@ -1,5 +1,5 @@
-if (!window.toughsocks)
-    toughsocks={};
+if (!window.toughproxy)
+    toughproxy={};
 
 // if (!webix.env.touch && webix.ui.scrollSize){
 //     webix.CustomScroll.init();
@@ -12,33 +12,33 @@ if(!currentLang){
 }
 webix.i18n.setLocale(currentLang);
 
-toughsocks.admin = {};
-toughsocks.admin.tabsId = "toughsocks.admin-main-tabs";
-toughsocks.admin.viewsId = "toughsocks.admin-main-views";
-toughsocks.admin.tabviews = "toughsocks.admin-main-tabviews";
-toughsocks.admin.toolbarId = "toughsocks.admin-main-toolbar";
-toughsocks.admin.actions = {};
-toughsocks.admin.methods = {};
+toughproxy.admin = {};
+toughproxy.admin.tabsId = "toughproxy.admin-main-tabs";
+toughproxy.admin.viewsId = "toughproxy.admin-main-views";
+toughproxy.admin.tabviews = "toughproxy.admin-main-tabviews";
+toughproxy.admin.toolbarId = "toughproxy.admin-main-toolbar";
+toughproxy.admin.actions = {};
+toughproxy.admin.methods = {};
 
-toughsocks.admin.methods.addTabView = function (vid, icon, title, tabview, close){
+toughproxy.admin.methods.addTabView = function (vid, icon, title, tabview, close){
     if(!$$(vid)){
-        $$(toughsocks.admin.viewsId).addView(tabview);
-        $$(toughsocks.admin.tabsId).addOption({id:vid, value:title, close:close, icon:icon}, true);
+        $$(toughproxy.admin.viewsId).addView(tabview);
+        $$(toughproxy.admin.tabsId).addOption({id:vid, value:title, close:close, icon:icon}, true);
         $$(vid).show(true,false);
-        $$(toughsocks.admin.viewsId).refresh();
-        $$(toughsocks.admin.tabviews).refresh();
+        $$(toughproxy.admin.viewsId).refresh();
+        $$(toughproxy.admin.tabviews).refresh();
     }else{
-        $$(toughsocks.admin.tabsId).addOption({id:vid, value:title, close:close, icon:icon}, true);
-        $$(toughsocks.admin.tabsId).setValue(vid);
-        $$(toughsocks.admin.tabsId).showOption(vid);
+        $$(toughproxy.admin.tabsId).addOption({id:vid, value:title, close:close, icon:icon}, true);
+        $$(toughproxy.admin.tabsId).setValue(vid);
+        $$(toughproxy.admin.tabsId).showOption(vid);
         $$(vid).show(true,false);
-        $$(toughsocks.admin.viewsId).refresh();
-        $$(toughsocks.admin.tabviews).refresh();
+        $$(toughproxy.admin.viewsId).refresh();
+        $$(toughproxy.admin.tabviews).refresh();
     }
 
 };
 
-toughsocks.admin.methods.doLogin = function (formValues){
+toughproxy.admin.methods.doLogin = function (formValues){
     webix.ajax().post('/login',formValues).then(function (result) {
         var resp = result.json();
         if (resp.code===0){
@@ -51,7 +51,7 @@ toughsocks.admin.methods.doLogin = function (formValues){
     });
 };
 
-toughsocks.admin.methods.showBusyBar = function (viewid,delay, callback){
+toughproxy.admin.methods.showBusyBar = function (viewid,delay, callback){
     $$(viewid).disable();
     $$(viewid).showProgress({
         type:"top",
@@ -64,7 +64,7 @@ toughsocks.admin.methods.showBusyBar = function (viewid,delay, callback){
     }, delay);
 };
 
-toughsocks.admin.initUploadApi = function(uid, uploadurl, callback){
+toughproxy.admin.initUploadApi = function(uid, uploadurl, callback){
      webix.ui({
         id:uid,
         view:"uploader",
@@ -91,7 +91,7 @@ toughsocks.admin.initUploadApi = function(uid, uploadurl, callback){
 };
 
 
-toughsocks.admin.methods.updatePassword = function(hnode){
+toughproxy.admin.methods.updatePassword = function(hnode){
     var pwinid = webix.uid();
     var formid = webix.uid();
     webix.ui({
@@ -146,7 +146,7 @@ toughsocks.admin.methods.updatePassword = function(hnode){
     }).show(hnode);
 };
 
-toughsocks.admin.methods.requirejs = function(jsname, session,callback){
+toughproxy.admin.methods.requirejs = function(jsname, session,callback){
     console.log("load admin/" + jsname + ".js");
     if(session.dev_mode === 'enabled'){
          webix.require("admin/" + jsname + ".js?rand="+new Date().getTime(), function () {
@@ -191,7 +191,7 @@ webix.ready(function() {
                                     {
                                         view: "button", css: "nav-item-color", type: "icon", width: 90, maxWidth: 200, icon: "key",align:"right",
                                         label: "修改密码", click: function () {
-                                            toughsocks.admin.methods.updatePassword(this.$view);
+                                            toughproxy.admin.methods.updatePassword(this.$view);
                                         }
                                     },
                                     {
@@ -223,7 +223,7 @@ webix.ready(function() {
                                                         try {
                                                             console.log("action = " + id);
                                                             webix.require("admin/" + id + ".js?rand="+new Date().getTime(), function () {
-                                                                toughsocks.admin[id].loadPage(session);
+                                                                toughproxy.admin[id].loadPage(session);
                                                             });
                                                         } catch (err) {
                                                             console.log(err);
@@ -232,7 +232,7 @@ webix.ready(function() {
                                                 },
                                                 ready: function () {
                                                     webix.require("admin/dashboard.js?rand="+new Date().getTime(), function () {
-                                                        toughsocks.admin.dashboard.loadPage(session);
+                                                        toughproxy.admin.dashboard.loadPage(session);
                                                     });
                                                 }
                                             }
@@ -243,10 +243,10 @@ webix.ready(function() {
                             {
                                 rows:[
                                     {
-                                        id:toughsocks.admin.tabviews,
+                                        id:toughproxy.admin.tabviews,
                                         rows:[
                                             {
-                                                id:toughsocks.admin.tabsId, view:"tabbar",css:"main-tabs",
+                                                id:toughproxy.admin.tabsId, view:"tabbar",css:"main-tabs",
                                                 animate:false,
                                                 bottomOffset:10,
                                                 optionWidth: 180,
@@ -255,7 +255,7 @@ webix.ready(function() {
                                                 options:[],
                                                 height:50
                                             },
-                                            { id:toughsocks.admin.viewsId, animate:false,cells:[
+                                            { id:toughproxy.admin.viewsId, animate:false,cells:[
                                                 {view:"template", id:"tpl", template:"0000"}
                                             ]}
                                         ]
@@ -265,7 +265,7 @@ webix.ready(function() {
                                         height:36,
                                         borderless:true,
                                         cols:[
-                                            {},{view:"label", css:"Copyright", label:"Copyright © TOUUGHSOCKS 版权所有，侵权必究！"}, {}
+                                            {},{view:"label", css:"Copyright", label:"Copyright © TOUGHPROXY 版权所有，侵权必究！"}, {}
                                         ]
                                     }
                                 ]

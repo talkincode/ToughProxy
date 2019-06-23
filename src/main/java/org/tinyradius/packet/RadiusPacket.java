@@ -7,7 +7,7 @@ import org.tinyradius.dictionary.DefaultDictionary;
 import org.tinyradius.dictionary.Dictionary;
 import org.tinyradius.util.RadiusException;
 import org.tinyradius.util.RadiusUtil;
-import org.toughsocks.common.DateTimeUtil;
+import org.toughproxy.common.DateTimeUtil;
 
 import java.io.*;
 import java.net.InetSocketAddress;

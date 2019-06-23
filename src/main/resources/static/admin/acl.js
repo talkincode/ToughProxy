@@ -1,12 +1,12 @@
-if (!window.toughsocks.admin.acl)
-    toughsocks.admin.acl={};
+if (!window.toughproxy.admin.acl)
+    toughproxy.admin.acl={};
 
 
-toughsocks.admin.acl.dataViewID = "toughsocks.admin.acl.dataViewID";
-toughsocks.admin.acl.loadPage = function(session,keyword){
+toughproxy.admin.acl.dataViewID = "toughproxy.admin.acl.dataViewID";
+toughproxy.admin.acl.loadPage = function(session,keyword){
     var tableid = webix.uid();
     var queryid = webix.uid();
-    toughsocks.admin.acl.reloadData = function(){
+    var reloadData = function(){
         $$(tableid).refresh();
         $$(tableid).clearAll();
         var params = $$(queryid).getValues();
@@ -15,16 +15,14 @@ toughsocks.admin.acl.loadPage = function(session,keyword){
             args.push(k+"="+params[k]);
         }
         $$(tableid).load('/admin/acl/query?'+args.join("&"));
-    }
-
-    var reloadData = toughsocks.admin.acl.reloadData;
+    };
 
     var cview = {
-        id: "toughsocks.admin.acl",
+        id: "toughproxy.admin.acl",
         css:"main-panel",padding:10,
         rows:[
             {
-                id:toughsocks.admin.acl.dataViewID,
+                id:toughproxy.admin.acl.dataViewID,
                 rows:[
                     {
                         view: "toolbar",
@@ -33,7 +31,9 @@ toughsocks.admin.acl.loadPage = function(session,keyword){
                         cols: [
                             {
                                 view: "button", type: "form", width: 70, icon: "plus", label: "创建策略", click: function () {
-                                    toughsocks.admin.acl.newAclForm(session);
+                                    toughproxy.admin.acl.newAclForm(session,function () {
+                                        reloadData();
+                                    });
                                 }
                             },
                             {
@@ -50,7 +50,7 @@ toughsocks.admin.acl.loadPage = function(session,keyword){
                                     if (rows.length === 0) {
                                         webix.message({ type: 'error', text: "请至少勾选一项", expire: 1500 });
                                     } else {
-                                        toughsocks.admin.acl.aclDelete(rows.join(","), function () {
+                                        toughproxy.admin.acl.aclDelete(rows.join(","), function () {
                                             reloadData();
                                         });
                                     }
@@ -74,13 +74,15 @@ toughsocks.admin.acl.loadPage = function(session,keyword){
                                         type:"space", id:"a1", paddingY:0, rows:[{
                                             type:"space", padding:0,responsive:"a1", cols:[
                                                 {
-                                                    view: "richselect", width:180, css:"nborder-input2", name: "policy", value:"accept", label: "访问策略", icon: "caret-down",
+                                                    view: "richselect", width:180, css:"nborder-input2", name: "policy", value:"", label: "访问策略", icon: "caret-down",
                                                     options: [
+                                                        { id: 'all', value: "所有" },
                                                         { id: 'accept', value: "允许" },
                                                         { id: 'reject', value: "拒绝" }
                                                     ]
                                                 },
-                                                {view: "text", css:"nborder-input2",  name: "ipaddr", label: "IP 地址", placeholder: "IP 地址/段", width:240},
+                                                {view: "text", css:"nborder-input2",  name: "src", label: "来源IP地址", placeholder: "来源IP地址/段", width:240},
+                                                {view: "text", css:"nborder-input2",  name: "target", label: "目标IP地址", placeholder: "目标IP地址/段", width:240},
                                                 {
                                                     cols:[
                                                         {view: "button", label: "查询", type: "icon", icon: "search", borderless: true, width: 64, click: function () {
@@ -107,9 +109,30 @@ toughsocks.admin.acl.loadPage = function(session,keyword){
                                 columns: [
                                     { id: "state", header: { content: "masterCheckbox", css: "center" }, width: 35, css: "center", template: "{common.checkbox()}" },
                                     { id: "id", header: ["ID"], hidden:true},
-                                    { id: "ipaddr", header: ["来源 IP 地址/段"],adjust:true},
+                                    { id: "priority", header: ["优先级"],adjust:true},
+                                    { id: "src", header: ["来源 IP 地址/段"],adjust:true,template: function (obj){
+                                        if (obj.src==null || obj.src === '') {
+                                            return "<span style='color:blue;'>任意</span>";
+                                        } else {
+                                            return  obj.src;
+                                        }
+                                    }},
+                                    { id: "target", header: ["目标 IP 地址/段"],adjust:true,template: function (obj){
+                                        if (obj.target==null || obj.target === '') {
+                                            return "<span style='color:blue;'>任意</span>";
+                                        } else {
+                                            return  obj.target;
+                                        }
+                                    }},
+                                    { id: "domain", header: ["目标域名"],adjust:true,template: function (obj){
+                                        if (obj.domain==null || obj.domain === '') {
+                                            return "<span style='color:blue;'>任意</span>";
+                                        } else {
+                                            return  obj.domain;
+                                        }
+                                    }},
                                     {
-                                        id: "policy", header: ["访问策略"], sort: "string",  fillspace:true, template: function (obj) {
+                                        id: "policy", header: ["访问策略"], sort: "string",  adjust:true, template: function (obj) {
                                             if (obj.policy === 'accept') {
                                                 return "<span style='color:green;'>允许</span>";
                                             } else if (obj.policy === 'reject') {
@@ -117,6 +140,16 @@ toughsocks.admin.acl.loadPage = function(session,keyword){
                                             }
                                         }
                                     },
+                                    {
+                                        id: "status", header: ["状态"], sort: "string",  adjust:true, template: function (obj) {
+                                            if (obj.status === 1) {
+                                                return "<span style='color:green;'>正常</span>";
+                                            } else if (obj.status === 0) {
+                                                return "<span style='color:orangered;'>停用</span>";
+                                            }
+                                        }
+                                    },
+                                    { id: "hits", header: ["匹配次数"],fillspace:true},
                                     { id: "opt", header: '操作', adjust:true,template: function(obj){
                                             var actions = [];
                                             actions.push("<span title='修改' class='table-btn do_update'><i class='fa fa-edit'></i></span> ");
@@ -144,7 +177,7 @@ toughsocks.admin.acl.loadPage = function(session,keyword){
                                 },
                                 onClick: {
                                     do_update: function(e, id){
-                                        toughsocks.admin.acl.aclUpdate(session, this.getItem(id), function () {
+                                        toughproxy.admin.acl.aclUpdate(session, this.getItem(id), function () {
                                             reloadData();
                                         });
                                     }
@@ -179,12 +212,12 @@ toughsocks.admin.acl.loadPage = function(session,keyword){
                 ]
             },
             {
-                id: toughsocks.admin.acl.detailFormID,
+                id: toughproxy.admin.acl.detailFormID,
                 hidden:true
             }
         ]
     };
-    toughsocks.admin.methods.addTabView("toughsocks.admin.acl","user-o","访问控制", cview, true);
+    toughproxy.admin.methods.addTabView("toughproxy.admin.acl","key","访问控制", cview, true);
     webix.extend($$(tableid), webix.ProgressBar);
 };
 
@@ -194,8 +227,8 @@ toughsocks.admin.acl.loadPage = function(session,keyword){
  * @param session
  * @constructor
  */
-toughsocks.admin.acl.newAclForm = function(session){
-    var winid = "toughsocks.admin.acl.newAclForm";
+toughproxy.admin.acl.newAclForm = function(session,callback){
+    var winid = "toughproxy.admin.acl.newAclForm";
     if($$(winid))
         return;
     var formid = winid+"_form";
@@ -227,11 +260,16 @@ toughsocks.admin.acl.newAclForm = function(session){
                     scroll: 'y',
                     elementsConfig: { labelWidth: 110 },
                     elements: [
-                        { view: "richselect", name: "policy", label: "访问策略", icon: "caret-down", validate:webix.rules.isNotEmpty,
+                        { view: "radio", name: "policy", label: "访问策略", icon: "caret-down", validate:webix.rules.isNotEmpty,
                             options: [{id:"accept",value:"允许"},{id:"reject",value:"拒绝"}]
                         },
-                        {view: "text", name: "ipaddr", label: "IP地址/段", validate:webix.rules.isNotEmpty },
-                        {view: "label", css:"form-desc", label:"支持格式 x.x.x.x x.x.x.x/x x.x.x.x-x.x.x.x"}
+                        {view: "text", name: "priority", label: "优先级", validate:webix.rules.isNumber },
+                        {view: "text", name: "src", label: "来源IP地址/段"},
+                        {view: "label", css:"form-desc", label:"支持格式 x.x.x.x；x.x.x.x/x； x.x.x.x-x.x.x.x"},
+                        {view: "text", name: "target", label: "目标IP地址/段" },
+                        {view: "label", css:"form-desc", label:"支持格式 x.x.x.x；x.x.x.x/x； x.x.x.x-x.x.x.x"},
+                        {view: "text", name: "domain", label: "目标域名" },
+                        {view: "label", css:"form-desc", label:"目标域名和目标IP地址/段只填写一项即可"},
                     ]
                 },
                 {
@@ -254,7 +292,8 @@ toughsocks.admin.acl.newAclForm = function(session){
                                     var resp = result.json();
                                     webix.message({ type: resp.msgtype, text: resp.msg, expire: 3000 });
                                     if (resp.code === 0) {
-                                        toughsocks.admin.acl.reloadData();
+                                        if(callback)
+                                            callback();
                                         $$(winid).close();
                                     }
                                 });
@@ -276,8 +315,8 @@ toughsocks.admin.acl.newAclForm = function(session){
 
 
 
-toughsocks.admin.acl.aclUpdate = function(session,item,callback){
-    var updateWinid = "toughsocks.admin.acl.aclUpdate";
+toughproxy.admin.acl.aclUpdate = function(session,item,callback){
+    var updateWinid = "toughproxy.admin.acl.aclUpdate";
     if($$(updateWinid))
         return;
     var formid = updateWinid+"_form";
@@ -313,10 +352,16 @@ toughsocks.admin.acl.aclUpdate = function(session,item,callback){
                     paddingX:10,
                     elements: [
                         { view: "text", name: "id",  hidden: true, value: item.id },
-                        { view: "richselect", name: "policy", label: "访问策略", icon: "caret-down", value:item.policy, validate:webix.rules.isNotEmpty,
+                        { view: "radio", name: "policy", label: "访问策略", icon: "caret-down", value:item.policy, validate:webix.rules.isNotEmpty,
                             options: [{id:"accept",value:"允许"},{id:"reject",value:"拒绝"}]
                         },
-                        {view: "text", name: "ipaddr", label: "IP地址/段", css:"nborder-input", value:item.ipaddr, readonly:true },
+                        { view: "radio", name: "status", label: "状态", icon: "caret-down", value:item.status, validate:webix.rules.isNotEmpty,
+                            options: [{id:"1",value:"启用"},{id:"0",value:"停用"}]
+                        },
+                        {view: "text", name: "priority", label: "优先级", value:item.priority, validate:webix.rules.isNumber },
+                        {view: "text", name: "src", label: "来源IP地址/段", value:item.src},
+                        {view: "text", name: "target", label: "目标IP地址/段", value:item.target},
+                        {view: "text", name: "domain", label: "目标域名", value:item.domain },
                     ]
                 },
                 {
@@ -338,7 +383,8 @@ toughsocks.admin.acl.aclUpdate = function(session,item,callback){
                                     var resp = result.json();
                                     webix.message({ type: resp.msgtype, text: resp.msg, expire: 3000 });
                                     if (resp.code === 0) {
-                                        toughsocks.admin.acl.reloadData();
+                                        if(callback)
+                                            callback();
                                         $$(updateWinid).close();
                                     }
                                 });
@@ -353,7 +399,7 @@ toughsocks.admin.acl.aclUpdate = function(session,item,callback){
 
 };
 
-toughsocks.admin.acl.aclDelete = function (ids,callback) {
+toughproxy.admin.acl.aclDelete = function (ids,callback) {
     webix.confirm({
         title: "操作确认",
         ok: "是", cancel: "否",

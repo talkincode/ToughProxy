@@ -1,1 +1,1 @@
-java -jar -Xms256m -Xmx1024m toughsocks-latest.jar  --spring.profiles.active=prod
+java -jar -Xms256m -Xmx1024m toughproxy-latest.jar  --spring.profiles.active=prod

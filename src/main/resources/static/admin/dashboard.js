@@ -1,7 +1,7 @@
-if (!window.toughsocks.admin.dashboard)
-    toughsocks.admin.dashboard={};
+if (!window.toughproxy.admin.dashboard)
+    toughproxy.admin.dashboard={};
 
-toughsocks.admin.dashboard.UiCpuUseChart = function (uid) {
+toughproxy.admin.dashboard.UiCpuUseChart = function (uid) {
     return {
         id: uid,
         view: "highcharts",
@@ -10,7 +10,7 @@ toughsocks.admin.dashboard.UiCpuUseChart = function (uid) {
             type: 'solidgauge',
             events: {
                 load: function () {
-                    toughsocks.admin.dashboard.updateCpuUseChart(uid);
+                    toughproxy.admin.dashboard.updateCpuUseChart(uid);
                 }
             }
         },
@@ -63,7 +63,7 @@ toughsocks.admin.dashboard.UiCpuUseChart = function (uid) {
     }
 };
 
-toughsocks.admin.dashboard.UiMemUseChart = function (uid) {
+toughproxy.admin.dashboard.UiMemUseChart = function (uid) {
     return {
         id: uid,
         view: "highcharts",
@@ -72,7 +72,7 @@ toughsocks.admin.dashboard.UiMemUseChart = function (uid) {
             type: 'solidgauge',
             events: {
                 load: function () {
-                    toughsocks.admin.dashboard.updateMemUseChart(uid);
+                    toughproxy.admin.dashboard.updateMemUseChart(uid);
                 }
             }
         },
@@ -126,7 +126,7 @@ toughsocks.admin.dashboard.UiMemUseChart = function (uid) {
 };
 
 
-toughsocks.admin.dashboard.UiDiskUseChart = function (uid) {
+toughproxy.admin.dashboard.UiDiskUseChart = function (uid) {
     return {
         id: uid,
         view: "highcharts",
@@ -135,7 +135,7 @@ toughsocks.admin.dashboard.UiDiskUseChart = function (uid) {
             type: 'solidgauge',
             events: {
                 load: function () {
-                    toughsocks.admin.dashboard.updateDiskUseChart(uid);
+                    toughproxy.admin.dashboard.updateDiskUseChart(uid);
                 }
             }
         },
@@ -188,7 +188,7 @@ toughsocks.admin.dashboard.UiDiskUseChart = function (uid) {
     }
 };
 
-toughsocks.admin.dashboard.socksStatChart = function (session,uid) {
+toughproxy.admin.dashboard.socksStatChart = function (session,uid) {
     return {
         id: uid,
         view: "highcharts",
@@ -198,7 +198,7 @@ toughsocks.admin.dashboard.socksStatChart = function (session,uid) {
             type: 'areaspline',
             events: {
                 load: function () {
-                    toughsocks.admin.dashboard.updateSocksStatChart(session, uid);
+                    toughproxy.admin.dashboard.updateSocksStatChart(session, uid);
                 }
             }
         },
@@ -235,7 +235,7 @@ toughsocks.admin.dashboard.socksStatChart = function (session,uid) {
 };
 
 
-toughsocks.admin.dashboard.updateSocksStatChart = function (session,uid) {
+toughproxy.admin.dashboard.updateSocksStatChart = function (session,uid) {
     webix.ajax().get('/admin/socks/stat',{}).then(function (result) {
         var data = result.json();
         try {
@@ -256,7 +256,7 @@ toughsocks.admin.dashboard.updateSocksStatChart = function (session,uid) {
 
 
 
-toughsocks.admin.dashboard.trafficStatChart = function (session,uid) {
+toughproxy.admin.dashboard.trafficStatChart = function (session,uid) {
     return {
         id: uid,
         view: "highcharts",
@@ -266,7 +266,7 @@ toughsocks.admin.dashboard.trafficStatChart = function (session,uid) {
             type: 'areaspline',
             events: {
                 load: function () {
-                    toughsocks.admin.dashboard.updatetrafficStatChart(session, uid);
+                    toughproxy.admin.dashboard.updatetrafficStatChart(session, uid);
                 }
             }
         },
@@ -302,7 +302,7 @@ toughsocks.admin.dashboard.trafficStatChart = function (session,uid) {
     }
 };
 
-toughsocks.admin.dashboard.updatetrafficStatChart = function (session,uid) {
+toughproxy.admin.dashboard.updatetrafficStatChart = function (session,uid) {
     webix.ajax().get('/admin/traffic/stat',{}).then(function (result) {
         var data = result.json();
         try {
@@ -321,7 +321,7 @@ toughsocks.admin.dashboard.updatetrafficStatChart = function (session,uid) {
 /**
  * 更新CPU性能数据
  */
-toughsocks.admin.dashboard.updateCpuUseChart = function (uid) {
+toughproxy.admin.dashboard.updateCpuUseChart = function (uid) {
     webix.ajax().get('/admin/dashboard/cpuuse',{}).then(function (result) {
         var resp = result.json();
         if(resp.code===1){
@@ -340,7 +340,7 @@ toughsocks.admin.dashboard.updateCpuUseChart = function (uid) {
 /**
  * 更新内存百分比数据
  */
-toughsocks.admin.dashboard.updateMemUseChart = function (uid) {
+toughproxy.admin.dashboard.updateMemUseChart = function (uid) {
     webix.ajax().get('/admin/dashboard/memuse',{}).then(function (result) {
         var resp = result.json();
         if(resp.code===1){
@@ -357,7 +357,7 @@ toughsocks.admin.dashboard.updateMemUseChart = function (uid) {
     });
 };
 
-toughsocks.admin.dashboard.updateDiskUseChart = function (uid) {
+toughproxy.admin.dashboard.updateDiskUseChart = function (uid) {
     webix.ajax().get('/admin/dashboard/diskuse',{}).then(function (result) {
         var resp = result.json();
         if(resp.code===1){
@@ -375,7 +375,7 @@ toughsocks.admin.dashboard.updateDiskUseChart = function (uid) {
 };
 
 
-toughsocks.admin.dashboard.basicInfo = function(session){
+toughproxy.admin.dashboard.basicInfo = function(session){
     return {
         // view:"portlet",
         icon:false,
@@ -411,15 +411,15 @@ toughsocks.admin.dashboard.basicInfo = function(session){
     };
 };
 
-toughsocks.admin.dashboard.loadPage = function(session){
-    var cpuchartUid = "toughsocks.admin.dashboard.cpuchart_viewid." + webix.uid();
-    var memchartUid = "toughsocks.admin.dashboard.memchart_viewid." + webix.uid();
-    var diskchartUid = "toughsocks.admin.dashboard.diskchart_viewid." + webix.uid();
-    var socksstatchartid = "toughsocks.admin.dashboard.socksstatchart_view." + webix.uid();
-    var trafficstatchartid = "toughsocks.admin.dashboard.trafficstatchart_viewid." + webix.uid();
-    var uptimeid = "toughsocks.admin.dashboard.uptime.label";
+toughproxy.admin.dashboard.loadPage = function(session){
+    var cpuchartUid = "toughproxy.admin.dashboard.cpuchart_viewid." + webix.uid();
+    var memchartUid = "toughproxy.admin.dashboard.memchart_viewid." + webix.uid();
+    var diskchartUid = "toughproxy.admin.dashboard.diskchart_viewid." + webix.uid();
+    var socksstatchartid = "toughproxy.admin.dashboard.socksstatchart_view." + webix.uid();
+    var trafficstatchartid = "toughproxy.admin.dashboard.trafficstatchart_viewid." + webix.uid();
+    var uptimeid = "toughproxy.admin.dashboard.uptime.label";
     var cview = {
-        id:"toughsocks.admin.dashboard",
+        id:"toughproxy.admin.dashboard",
         css:"main-panel",padding:10,
         rows:[
             {
@@ -429,7 +429,7 @@ toughsocks.admin.dashboard.loadPage = function(session){
                 body:{
                     type:"wide",
                     rows: [
-                        toughsocks.admin.dashboard.basicInfo(session),
+                        toughproxy.admin.dashboard.basicInfo(session),
                         // {height:10},
                         {
                             // view: "portlet",
@@ -451,9 +451,9 @@ toughsocks.admin.dashboard.loadPage = function(session){
                                             // borderless: true,
                                             width: 60,
                                             click: function () {
-                                                toughsocks.admin.dashboard.updateCpuUseChart(cpuchartUid);
-                                                toughsocks.admin.dashboard.updateMemUseChart(memchartUid);
-                                                toughsocks.admin.dashboard.updateDiskUseChart(memchartUid);
+                                                toughproxy.admin.dashboard.updateCpuUseChart(cpuchartUid);
+                                                toughproxy.admin.dashboard.updateMemUseChart(memchartUid);
+                                                toughproxy.admin.dashboard.updateDiskUseChart(memchartUid);
                                                 webix.ajax().get('/admin/dashboard/uptime',{}).then(function (result) {
                                                     $$(uptimeid).define("template",  result.text());
                                                     $$(uptimeid).refresh();
@@ -465,9 +465,9 @@ toughsocks.admin.dashboard.loadPage = function(session){
                                 {
                                     height:180,
                                     cols:[
-                                        toughsocks.admin.dashboard.UiCpuUseChart(cpuchartUid),
-                                        toughsocks.admin.dashboard.UiMemUseChart(memchartUid),
-                                        toughsocks.admin.dashboard.UiDiskUseChart(diskchartUid)
+                                        toughproxy.admin.dashboard.UiCpuUseChart(cpuchartUid),
+                                        toughproxy.admin.dashboard.UiMemUseChart(memchartUid),
+                                        toughproxy.admin.dashboard.UiDiskUseChart(diskchartUid)
                                     ]
                                 }
                             ]
@@ -492,16 +492,16 @@ toughsocks.admin.dashboard.loadPage = function(session){
                                             borderless: true,
                                             width:60,
                                             click: function () {
-                                                toughsocks.admin.dashboard.updateSocksStatChart(session,socksstatchartid);
-                                                toughsocks.admin.dashboard.updatetrafficStatChart(session,trafficstatchartid);
+                                                toughproxy.admin.dashboard.updateSocksStatChart(session,socksstatchartid);
+                                                toughproxy.admin.dashboard.updatetrafficStatChart(session,trafficstatchartid);
                                             }
                                         }
                                     ]
                                 },
                                 {
                                     rows:[
-                                        toughsocks.admin.dashboard.trafficStatChart(session,trafficstatchartid),
-                                        toughsocks.admin.dashboard.socksStatChart(session,socksstatchartid)
+                                        toughproxy.admin.dashboard.trafficStatChart(session,trafficstatchartid),
+                                        toughproxy.admin.dashboard.socksStatChart(session,socksstatchartid)
                                     ]
                                 }
                             ]
@@ -512,19 +512,19 @@ toughsocks.admin.dashboard.loadPage = function(session){
             }
         ]
     };
-    toughsocks.admin.methods.addTabView("toughsocks.admin.dashboard","dashboard","控制面板", cview, false);
+    toughproxy.admin.methods.addTabView("toughproxy.admin.dashboard","dashboard","控制面板", cview, false);
     webix.ajax().get('/admin/dashboard/uptime',{}).then(function (result) {
         $$(uptimeid).define("template",result.text());
         $$(uptimeid).refresh();
     });
 
     //定时刷新消息统计
-    if(toughsocks.admin.dashboard.msgRefershTimer){
-        clearInterval(toughsocks.admin.dashboard.msgRefershTimer);
+    if(toughproxy.admin.dashboard.msgRefershTimer){
+        clearInterval(toughproxy.admin.dashboard.msgRefershTimer);
     }
     var reffunc = function(){
-        toughsocks.admin.dashboard.updatetrafficStatChart(session, trafficstatchartid);
-        toughsocks.admin.dashboard.updateSocksStatChart(session, socksstatchartid);
+        toughproxy.admin.dashboard.updatetrafficStatChart(session, trafficstatchartid);
+        toughproxy.admin.dashboard.updateSocksStatChart(session, socksstatchartid);
     };
-    toughsocks.admin.dashboard.msgRefershTimer = setInterval(reffunc,60*1000)
+    toughproxy.admin.dashboard.msgRefershTimer = setInterval(reffunc,60*1000)
 };

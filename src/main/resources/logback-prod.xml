@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
     <contextName>TOUGHSCOKS</contextName>
-    <property name="log.path" value="/var/toughsocks/logs"/>
+    <property name="log.path" value="/var/toughproxy/logs"/>
     <!--输出到控制台-->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -15,7 +15,7 @@
     <!--输出到文件-->
     <appender name="infolog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/toughsocks.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.path}/toughproxy.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
@@ -31,7 +31,7 @@
 
     <appender name="errorlog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/toughsocks.error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.path}/toughproxy.error.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
@@ -52,27 +52,27 @@
     </root>
 
     <!--logback.LogbackDemo：类的全路径 -->
-    <logger name="org.toughsocks.mapper" level="info" additivity="false">
+    <logger name="org.toughproxy.mapper" level="info" additivity="false">
         <appender-ref ref="infolog"/>
         <appender-ref ref="errorlog"/>
     </logger>
 
-    <logger name="org.toughsocks.controller" level="info" additivity="false">
+    <logger name="org.toughproxy.controller" level="info" additivity="false">
         <appender-ref ref="infolog"/>
         <appender-ref ref="errorlog"/>
     </logger>
 
-    <logger name="org.toughsocks.handler" level="info" additivity="false">
+    <logger name="org.toughproxy.handler" level="info" additivity="false">
         <appender-ref ref="infolog"/>
         <appender-ref ref="errorlog"/>
     </logger>
 
-    <logger name="org.toughsocks.config" level="info" additivity="false">
+    <logger name="org.toughproxy.config" level="info" additivity="false">
         <appender-ref ref="infolog"/>
         <appender-ref ref="errorlog"/>
     </logger>
 
-    <logger name="org.toughsocks.component" level="info" additivity="false">
+    <logger name="org.toughproxy.component" level="info" additivity="false">
         <appender-ref ref="infolog"/>
         <appender-ref ref="errorlog"/>
     </logger>

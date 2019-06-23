@@ -6,7 +6,6 @@ import org.apache.commons.logging.LogFactory;
 import org.tinyradius.packet.AccessRequest;
 import org.tinyradius.packet.AccountingRequest;
 import org.tinyradius.packet.RadiusPacket;
-import org.toughsocks.entity.SocksAuthResp;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

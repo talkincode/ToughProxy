@@ -1,8 +1,8 @@
-if (!window.toughsocks.admin.ticket)
-    toughsocks.admin.ticket={};
+if (!window.toughproxy.admin.ticket)
+    toughproxy.admin.ticket={};
 
 
-toughsocks.admin.ticket.loadPage = function(session){
+toughproxy.admin.ticket.loadPage = function(session){
     var tableid = webix.uid();
     var queryid = webix.uid();
     var reloadData = function(node_id){
@@ -17,7 +17,7 @@ toughsocks.admin.ticket.loadPage = function(session){
         $$(tableid).load('/admin/ticket/query?'+args.join("&"));
     };
     var cview = {
-        id:"toughsocks.admin.ticket",
+        id:"toughproxy.admin.ticket",
         css:"main-panel",padding:10,
         rows: [
             {
@@ -46,13 +46,11 @@ toughsocks.admin.ticket.loadPage = function(session){
                     {
                        type:"space", id:"a1", rows:[{
                          type:"space", padding:0, responsive:"a1", cols:[
-                            { view: "datepicker", name: "startTime", label: "连接时间",stringResult:true, timepicker: true, format: "%Y-%m-%d %h:%i"},
-                            { view: "datepicker", name: "endTime", label: "至", value:new Date(),stringResult:true, timepicker: true, format: "%Y-%m-%d %h:%i" },
+                            { view: "datepicker", name: "startTime", label: "连接时间", value:new Date(new Date().getTime()-14400000),  stringResult:true, timepicker: true, format: "%Y-%m-%d %H:%i"},
+                            { view: "datepicker", name: "endTime", label: "至", value:new Date(),stringResult:true, timepicker: true, format: "%Y-%m-%d %H:%i" },
                             {view: "text", name: "username", label: "用户名",  placeholder: "用户名"},
                             {view: "text", name: "srcAddr", label: "源地址",  placeholder: "源地址"},
-                            {view: "text", name: "srcPort", label: "源端口",  placeholder: "源端口"},
                             {view: "text", name: "dstAddr", label: "目的地址",  placeholder: "目的地址"},
-                            {view: "text", name: "dstPort", label: "目的端口",  placeholder: "目的端口"},
                             {
                                 cols:[
 
@@ -135,6 +133,6 @@ toughsocks.admin.ticket.loadPage = function(session){
             }
         ]
     };
-    toughsocks.admin.methods.addTabView("toughsocks.admin.ticket","hdd-o","网络日志", cview, true);
+    toughproxy.admin.methods.addTabView("toughproxy.admin.ticket","hdd-o","网络日志", cview, true);
     webix.extend($$(tableid), webix.ProgressBar);
 };

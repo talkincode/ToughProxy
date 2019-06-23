@@ -1,8 +1,8 @@
-if (!window.toughsocks.admin.syslog)
-    toughsocks.admin.syslog={};
+if (!window.toughproxy.admin.syslog)
+    toughproxy.admin.syslog={};
 
 
-toughsocks.admin.syslog.loadPage = function(session){
+toughproxy.admin.syslog.loadPage = function(session){
     var tableid = webix.uid();
     var queryid = webix.uid();
     var reloadData = function(){
@@ -17,7 +17,7 @@ toughsocks.admin.syslog.loadPage = function(session){
         $$(tableid).load('/admin/syslog/query?'+args.join("&"));
     };
     var cview = {
-        id:"toughsocks.admin.syslog",
+        id:"toughproxy.admin.syslog",
         css:"main-panel",padding:10,
         rows:[
             {
@@ -45,6 +45,7 @@ toughsocks.admin.syslog.loadPage = function(session){
                                                 { id: "http", value: "Http" },
                                                 { id: "api", value: "API接口" },
                                                 { id: "error", value: "错误日志" },
+                                                { id: "acl", value: "ACL日志" },
                                                 { id: "system", value: "系统日志" }]},
                                         {view: "button", label: "查询", type: "icon", icon: "search", borderless: true, width: 55,click:function(){
                                                 reloadData();
@@ -123,7 +124,7 @@ toughsocks.admin.syslog.loadPage = function(session){
             }
         ]
     };
-    toughsocks.admin.methods.addTabView("toughsocks.admin.syslog","hdd-o","系统日志", cview, true);
+    toughproxy.admin.methods.addTabView("toughproxy.admin.syslog","hdd-o","系统日志", cview, true);
     webix.extend($$(tableid), webix.ProgressBar);
 };
 
