@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.toughproxy.component.Memarylogger;
 import org.toughproxy.component.SocksStat;
 import org.toughproxy.config.Constant;
-import org.toughproxy.config.SocksConfig;
+import org.toughproxy.config.SocksProxyConfig;
 import org.toughproxy.component.ConfigService;
 
 @Component
@@ -21,7 +21,7 @@ public class Socks5InitialRequestHandler extends SimpleChannelInboundHandler<Def
     private Memarylogger memarylogger;
 
     @Autowired
-    private SocksConfig socksConfig;
+    private SocksProxyConfig socksProxyConfig;
 
     @Autowired
     private SocksStat socks5Stat;
@@ -38,7 +38,7 @@ public class Socks5InitialRequestHandler extends SimpleChannelInboundHandler<Def
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DefaultSocks5InitialRequest msg) throws Exception {
-        if(socksConfig.isDebug())
+        if(socksProxyConfig.isDebug())
             memarylogger.print("【socks5】初始化 socks5 连接 : " + msg);
 
         if(!SOCKS_AUTH_FREE_MODE.equals(configService.getStringValue(SYSTEM_MODULE,SYSTEM_SOCKS_USER_AUTH_MODE))) {

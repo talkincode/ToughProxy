@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-import org.toughproxy.config.SocksConfig;
+import org.toughproxy.config.SocksProxyConfig;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +25,7 @@ public class SystemTaskScheduler  {
     private ThreadPoolTaskExecutor systaskExecutor;
 
     @Autowired
-    private SocksConfig socksConfig;
+    private SocksProxyConfig socksProxyConfig;
 
     @Autowired
     private Memarylogger logger;
@@ -53,7 +53,7 @@ public class SystemTaskScheduler  {
     @Scheduled(fixedDelay = 5000, initialDelay = 5000)
     public void updateTrafficStat(){
         systaskExecutor.execute(()->{
-            TrafficCounter trafficCounter = socksConfig.getTrafficHandler().trafficCounter();
+            TrafficCounter trafficCounter = socksProxyConfig.getTrafficHandler().trafficCounter();
             try {
                 TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException ignore) {

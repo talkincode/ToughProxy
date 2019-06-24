@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.toughproxy.component.*;
 import org.toughproxy.common.DateTimeUtil;
 import org.toughproxy.common.ValidateUtil;
-import org.toughproxy.config.SocksConfig;
+import org.toughproxy.config.SocksProxyConfig;
 import org.toughproxy.entity.SocksSession;
 import org.toughproxy.handler.utils.SocksServerUtils;
 
@@ -27,7 +27,7 @@ import java.net.InetSocketAddress;
 public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandler<SocksMessage> {
 
     @Autowired
-    private SocksConfig socksConfig;
+    private SocksProxyConfig socksProxyConfig;
 
     @Autowired
     private Memarylogger memarylogger;
@@ -69,18 +69,18 @@ public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandle
             clientChannelContext.close();
             return;
         }else{
-            if(socksConfig.isDebug())
+            if(socksProxyConfig.isDebug())
                 memarylogger.info("anonymous","ACL Accept for "+srcip + " -> "+destip+"(domain="+destDomain+")",Memarylogger.ACL);
         }
 
-        if(socksConfig.isDebug())
+        if(socksProxyConfig.isDebug())
             memarylogger.print("【Socks4】1-开始连接目标服务器 : "+targetDesc);
 
         ChannelFuture future = bootstrap.connect(InetSocketAddress.createUnresolved(msg.dstAddr(), msg.dstPort()));
 //			ChannelFuture future = bootstrap.connect(InetSocketAddress.createUnresolved(msg.dstAddr(), msg.dstPort()),clientChannelContext.channel().localAddress());
         future.addListener((ChannelFutureListener) future1 -> {
             if(future1.isSuccess()) {
-                if(socksConfig.isDebug())
+                if(socksProxyConfig.isDebug())
                     memarylogger.print("【Socks4】2-成功连接目标服务器 : "+targetDesc);
 
                 socksStat.update(SocksStat.CONNECT_SUCCESS);
@@ -100,7 +100,7 @@ public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandle
                 sessionCache.addSession(session);
 
             } else {
-                if(socksConfig.isDebug())
+                if(socksProxyConfig.isDebug())
                     memarylogger.print("【Socks4】2-连接目标服务器 "+targetDesc+" 失败");
                 socksStat.update(SocksStat.CONNECT_FAILURE);
                 SocksServerUtils.closeOnFlush(clientChannelContext.channel());
@@ -167,7 +167,7 @@ public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandle
         public void channelRead(ChannelHandlerContext ctx2, Object destMsg) throws Exception {
             ByteBuf message = (ByteBuf) destMsg;
             long bytes = message.readableBytes();
-            if(socksConfig.isDebug())
+            if(socksProxyConfig.isDebug())
                 memarylogger.print("【Socks4】目标服务器-->代理-->客户端传输 ("+bytes+" bytes)");
             clientChannelContext.writeAndFlush(destMsg);
             updateSessionDownBytes(clientChannelContext,bytes);
@@ -175,7 +175,7 @@ public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandle
 
         @Override
         public void channelInactive(ChannelHandlerContext ctx2) throws Exception {
-            if(socksConfig.isDebug())
+            if(socksProxyConfig.isDebug())
                 memarylogger.print("【Socks4】断开目标服务器连接");
             if(clientChannelContext.channel().isActive()){
                 SocksServerUtils.closeOnFlush(clientChannelContext.channel());
@@ -207,7 +207,7 @@ public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandle
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
             ByteBuf message = (ByteBuf) msg;
             long bytes = message.readableBytes();
-            if(socksConfig.isDebug())
+            if(socksProxyConfig.isDebug())
                 memarylogger.print("【Socks4】客户端-->代理-->目标服务器传输 ("+bytes+" bytes)");
             destChannelFuture.channel().writeAndFlush(msg);
             updateSessionUpBytes(ctx,bytes);
@@ -215,7 +215,7 @@ public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandle
 
         @Override
         public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-            if(socksConfig.isDebug())
+            if(socksProxyConfig.isDebug())
                 memarylogger.print("【Socks4】断开客户端连接");
             destChannelFuture.channel().close();
             if(destChannelFuture.channel().isActive()){

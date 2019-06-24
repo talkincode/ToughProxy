@@ -5,14 +5,21 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollChannelOption;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
+import io.netty.util.NettyRuntime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.toughproxy.common.DefaultThreadFactory;
 import org.toughproxy.component.Memarylogger;
 import org.toughproxy.handler.SocksServerInitializer;
 
@@ -24,8 +31,8 @@ import java.util.Map;
 import java.util.Set;
 
 @Configuration
-@ConfigurationProperties(prefix = "org.toughproxy.ss")
-public class SocksConfig {
+@ConfigurationProperties(prefix = "org.toughproxy.socks")
+public class SocksProxyConfig {
 
     private int tcpPort;
     private int udpPort;
@@ -38,8 +45,6 @@ public class SocksConfig {
     private long writeLimit;
     private long checkInterval;
 
-    private ChannelFuture serverChannelFuture;
-
     @Autowired
     private Memarylogger memarylogger;
 
@@ -49,13 +54,17 @@ public class SocksConfig {
     private GlobalTrafficShapingHandler trafficHandler;
 
     @Bean(name = "bossGroup", destroyMethod = "shutdownGracefully")
-    public NioEventLoopGroup bossGroup() {
-        return new NioEventLoopGroup(bossThreads);
+    public EventLoopGroup bossGroup() {
+        DefaultThreadFactory factory = new DefaultThreadFactory("SocksPoroxyEvent");
+        int pool = Math.max(bossThreads, NettyRuntime.availableProcessors() * 2);
+        return Epoll.isAvailable() ? new EpollEventLoopGroup(pool,factory) : new NioEventLoopGroup(pool,factory);
     }
 
     @Bean(name = "workerGroup", destroyMethod = "shutdownGracefully")
-    public NioEventLoopGroup workerGroup() {
-        return new NioEventLoopGroup(workThreads);
+    public EventLoopGroup workerGroup() {
+        DefaultThreadFactory factory = new DefaultThreadFactory("SocksPoroxyEvent");
+        int pool = Math.max(workThreads, NettyRuntime.availableProcessors() * 2);
+        return Epoll.isAvailable() ? new EpollEventLoopGroup(pool,factory) : new NioEventLoopGroup(pool,factory);
     }
 
     @Bean(name = "tcpSocketAddress")
@@ -72,12 +81,13 @@ public class SocksConfig {
     }
 
     @PostConstruct
-    public void bootstrap() throws InterruptedException {
-        NioEventLoopGroup _workerGroup = workerGroup();
-        NioEventLoopGroup _bossGroup = bossGroup();
+    public void bootstrap() throws Exception {
+        EventLoopGroup _workerGroup = workerGroup();
+        EventLoopGroup _bossGroup = bossGroup();
         trafficHandler = new GlobalTrafficShapingHandler(_workerGroup, writeLimit, readLimiit);
         ServerBootstrap b = new ServerBootstrap();
-        b.group(_bossGroup, _workerGroup).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
+        b.group(_bossGroup, _workerGroup).channel(Epoll.isAvailable() ? EpollServerSocketChannel.class :NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 //流量统计
@@ -85,19 +95,30 @@ public class SocksConfig {
                 ch.pipeline().addLast(socksServerInitializer);
             }
         });
+
         Map<ChannelOption<?>, Object> tcpChannelOptions = tcpChannelOptions();
         Set<ChannelOption<?>> keySet = tcpChannelOptions.keySet();
         for (@SuppressWarnings("rawtypes")ChannelOption option : keySet) {
             b.option(option, tcpChannelOptions.get(option));
         }
-        memarylogger.print(String.format("====== Socks5Server listen %s ======", tcpPort));
-        serverChannelFuture = b.bind(tcpPort).sync();
+
+        if (Epoll.isAvailable()) {
+            b.option(EpollChannelOption.SO_REUSEADDR, true);
+            b.option(EpollChannelOption.SO_REUSEPORT, true);
+            int cpuNum = NettyRuntime.availableProcessors();
+            memarylogger.print(String.format("====== SocksProxyServer listen %s use Epoll and cpu "+cpuNum + "======", tcpPort));
+            for (int i = 0; i < cpuNum; i++) {
+                ChannelFuture future = b.bind(tcpPort).await();
+                if (!future.isSuccess()) {
+                    throw new Exception("SocksProxyServer bootstrap bind fail port is " + tcpPort);
+                }
+            }
+        }else{
+            memarylogger.print(String.format("====== SocksProxyServer listen %s ======", tcpPort));
+            b.bind(tcpPort).await();
+        }
     }
 
-    @PreDestroy
-    public void stop() throws Exception {
-        serverChannelFuture.channel().closeFuture();
-    }
 
     public GlobalTrafficShapingHandler getTrafficHandler() {
         return trafficHandler;

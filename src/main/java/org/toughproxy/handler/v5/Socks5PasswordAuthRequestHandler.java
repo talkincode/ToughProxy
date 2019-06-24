@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.toughproxy.component.*;
 import org.toughproxy.config.Constant;
-import org.toughproxy.config.SocksConfig;
+import org.toughproxy.config.SocksProxyConfig;
 import org.toughproxy.common.DateTimeUtil;
 import org.toughproxy.common.SocksRadiusClient;
 import org.toughproxy.entity.SocksAuthResp;
@@ -21,7 +21,7 @@ import org.toughproxy.entity.User;
 public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandler<DefaultSocks5PasswordAuthRequest> implements Constant {
 
     @Autowired
-    private SocksConfig socksConfig;
+    private SocksProxyConfig socksProxyConfig;
 
     @Autowired
     private Memarylogger memarylogger;
@@ -56,7 +56,7 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
         SocksAuthResp resp = null;
         try {
             resp = cli.doAuth(nasid, username, password);
-            if(socksConfig.isDebug()){
+            if(socksProxyConfig.isDebug()){
                 memarylogger.info("【socks5】收到 "+username+" Socks RADIUS 认证响应 " + resp.toString(),Memarylogger.SOCKS5);
             }
             return resp;
@@ -104,7 +104,7 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
             resp.setUpLimit(user.getUpLimit());
             resp.setDownLimit(user.getDownLimit());
         }
-        if(socksConfig.isDebug()){
+        if(socksProxyConfig.isDebug()){
             memarylogger.info(username,"【socks5】收到 "+username+" Socks 本地认证响应 " + resp.toString(),Memarylogger.SOCKS5);
         }
         return resp;
@@ -125,7 +125,7 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DefaultSocks5PasswordAuthRequest msg) throws Exception {
-        if(socksConfig.isDebug())
+        if(socksProxyConfig.isDebug())
             memarylogger.info(msg.username(),"【socks5】开始用户"+msg.username()+"认证 : " + msg.username(),Memarylogger.SOCKS5);
 
         SocksAuthResp resp = checkUserAndPasswd(msg.username(), msg.password());

@@ -9,7 +9,7 @@ import io.netty.handler.codec.socksx.v5.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.toughproxy.component.*;
-import org.toughproxy.config.SocksConfig;
+import org.toughproxy.config.SocksProxyConfig;
 import org.toughproxy.handler.utils.SocksServerUtils;
 import org.toughproxy.common.DateTimeUtil;
 import org.toughproxy.common.ValidateUtil;
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<DefaultSocks5CommandRequest> {
 
     @Autowired
-    private SocksConfig socksConfig;
+    private SocksProxyConfig socksProxyConfig;
 
     @Autowired
     private Memarylogger memarylogger;
@@ -69,18 +69,18 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
                 clientChannelContext.close();
                 return;
             }else{
-                if(socksConfig.isDebug())
+                if(socksProxyConfig.isDebug())
                     memarylogger.info(username,"ACL Accept for "+srcip + " -> "+destip+"(domain="+destDomain+")",Memarylogger.ACL);
             }
 
-            if(socksConfig.isDebug())
+            if(socksProxyConfig.isDebug())
                 memarylogger.print("【Socks5】1-开始连接目标服务器  : "+targetDesc);
 
             ChannelFuture future = bootstrap.connect(InetSocketAddress.createUnresolved(msg.dstAddr(), msg.dstPort()));
 //			ChannelFuture future = bootstrap.connect(InetSocketAddress.createUnresolved(msg.dstAddr(), msg.dstPort()),clientChannelContext.channel().localAddress());
             future.addListener((ChannelFutureListener) future1 -> {
                 if(future1.isSuccess()) {
-                    if(socksConfig.isDebug())
+                    if(socksProxyConfig.isDebug())
                         memarylogger.print("【Socks5】2-成功连接目标服务器  : "+targetDesc);
 
                     socksStat.update(SocksStat.CONNECT_SUCCESS);
@@ -100,7 +100,7 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
                     sessionCache.addSession(session);
 
                 } else {
-                    if(socksConfig.isDebug())
+                    if(socksProxyConfig.isDebug())
                         memarylogger.print("【Socks5】2-连接目标服务器 "+targetDesc+" 失败");
                     socksStat.update(SocksStat.CONNECT_FAILURE);
                     SocksServerUtils.closeOnFlush(clientChannelContext.channel());
@@ -108,13 +108,13 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
             });
 
         }else if(msg.type().equals(Socks5CommandType.UDP_ASSOCIATE)){
-            if(socksConfig.isDebug())
+            if(socksProxyConfig.isDebug())
                 memarylogger.print("【Socks5】0-准备建立UDP中继  : " + msg.type() + ",客户端地址：" + msg.dstAddr() + ",客户端端口：" + msg.dstPort());
             String bindAddr = ((InetSocketAddress)clientChannelContext.channel().localAddress()).getAddress().getHostAddress();
-            Socks5UdpRelay udpRelay = new Socks5UdpRelay(msg.dstPort(),memarylogger,socksConfig.isDebug());
+            Socks5UdpRelay udpRelay = new Socks5UdpRelay(msg.dstPort(),memarylogger, socksProxyConfig.isDebug());
             udpRelay.startRelay(clientChannelContext,(ChannelFutureListener) future1 -> {
                 if(future1.isSuccess()){
-                    if(socksConfig.isDebug())
+                    if(socksProxyConfig.isDebug())
                         memarylogger.print("【Socks5】UDP 中继创建成功，绑定端口："+udpRelay.getBindPort());
 
                     Socks5CommandResponse commandResponse = new DefaultSocks5CommandResponse(Socks5CommandStatus.SUCCESS,
@@ -200,7 +200,7 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
         public void channelRead(ChannelHandlerContext ctx2, Object destMsg) throws Exception {
             ByteBuf message = (ByteBuf) destMsg;
             long bytes = message.readableBytes();
-            if(socksConfig.isDebug())
+            if(socksProxyConfig.isDebug())
                 memarylogger.print("【Socks5】目标服务器-->代理-->客户端传输 ("+bytes+" bytes)");
             clientChannelContext.writeAndFlush(destMsg);
             updateSessionDownBytes(clientChannelContext,bytes);
@@ -208,7 +208,7 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
 
         @Override
         public void channelInactive(ChannelHandlerContext ctx2) throws Exception {
-            if(socksConfig.isDebug())
+            if(socksProxyConfig.isDebug())
                 memarylogger.print("【Socks5】断开目标服务器连接");
             clientChannelContext.channel().close();
         }
@@ -233,7 +233,7 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
             ByteBuf message = (ByteBuf) msg;
             long bytes = message.readableBytes();
-            if(socksConfig.isDebug())
+            if(socksProxyConfig.isDebug())
                 memarylogger.print("【Socks5】客户端-->代理-->目标服务器传输 ("+bytes+" bytes)");
             destChannelFuture.channel().writeAndFlush(msg);
             updateSessionUpBytes(ctx,bytes);
@@ -242,7 +242,7 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
 
         @Override
         public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-            if(socksConfig.isDebug())
+            if(socksProxyConfig.isDebug())
                 memarylogger.print("【Socks5】断开客户端连接");
             destChannelFuture.channel().close();
         }

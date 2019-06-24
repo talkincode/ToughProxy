@@ -6,8 +6,8 @@ ToughProxy 是一个代理服务器， 目标是提供一个综合性的代理�
 
 - Socks5 代理（支持UDP穿透）
 - Socks4 代理
-- Http代理（未完成）
-- Https代理（未完成）
+- Http代理
+- Https代理
 - Socks5 Radius 认证， 支持下发限速扩展
 - Socks5 数据库认证
 - 认证用户管理，批量创建用户支持，用户组支持

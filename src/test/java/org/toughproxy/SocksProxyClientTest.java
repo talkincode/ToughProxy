@@ -3,16 +3,18 @@ package org.toughproxy;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.junit.Test;
 
 import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 
-public class HttpProxyClient {
-	
-	public static void main(String[] args) throws Exception {
-		final String user = "test";
-		final String password = "test";
+public class SocksProxyClientTest {
+
+	@Test
+	public void testHttp() throws Exception {
+		final String user = "test01";
+		final String password = "888888";
 		
 		Proxy proxyTest = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("192.168.88.198", 1808));
 

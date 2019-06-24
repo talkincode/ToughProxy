@@ -27,6 +27,7 @@ public class Memarylogger {
     public final static String SOCKS4 = "socks4";
     public final static String SOCKS5 = "socks5";
     public final static String SYSTEM = "system";
+    public final static String HTTP = "http";
     public final static String ACL = "acl";
     public final static String API = "api";
     public final static String ERROR = "error";
@@ -40,6 +41,7 @@ public class Memarylogger {
         traceMap.put(TRAFFIC,new LoggerDeque(10000));
         traceMap.put(SOCKS4,new LoggerDeque(10000));
         traceMap.put(SOCKS5,new LoggerDeque(10000));
+        traceMap.put(HTTP,new LoggerDeque(10000));
         traceMap.put(SYSTEM,new LoggerDeque(10000));
         traceMap.put(ACL,new LoggerDeque(10000));
         traceMap.put(API,new LoggerDeque(10000));
