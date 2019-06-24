@@ -11,7 +11,7 @@ import java.net.Proxy;
 
 public class HttpProxyClientTest {
 
-	@Test
+//	@Test
 	public  void testHttp() throws Exception {
 		final String user = "test";
 		final String password = "test";
@@ -31,15 +31,10 @@ public class HttpProxyClientTest {
 
 
 		OkHttpClient client = new OkHttpClient.Builder().proxy(proxyTest).build();
-		for(int i = 0; i< 30;i++){
-//			Request request = new Request.Builder().url("http://192.168.88.198:1823/socktest").build();
-			Request request = new Request.Builder().url("http://www.baidu.com").addHeader("connection","Keep-Alive").build();
-			Response response = client.newCall(request).execute();
-			System.out.println(response.code());
-			System.out.println(response.body().string());
-
-			Thread.sleep(3000);
-		}
+		Request request = new Request.Builder().url("http://www.baidu.com").addHeader("connection","Keep-Alive").build();
+		Response response = client.newCall(request).execute();
+		System.out.println(response.code());
+		System.out.println(response.body().string());
 		client.dispatcher().executorService().shutdown();
 		client.connectionPool().evictAll();
 

@@ -370,3 +370,4 @@ VENDOR          18168   ToughProxy
 VENDORATTR      18168	ToughProxy-Up-Limit			1	integer
 VENDORATTR      18168	ToughProxy-Down-Limit		2	integer
 VENDORATTR      18168	ToughProxy-Max-Session		3	integer
+VENDORATTR      18168	ToughProxy-Max-Client		4	integer
