@@ -1,4 +1,4 @@
-![](http://static.toughcloud.net/toughsms/20190624230829.png)
+![](http://static.toughcloud.net/toughsms/20190624232022.png)
 
 # ToughProxy
 
