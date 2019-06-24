@@ -7,13 +7,18 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import org.toughproxy.common.ValidateUtil;
+import org.toughproxy.component.AclCache;
 import org.toughproxy.component.Memarylogger;
 import org.toughproxy.config.HttpProxyConfig;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 public class HttpProxyClientHandler extends ChannelInboundHandlerAdapter {
 
     private HttpProxyConfig httpProxyConfig;
     private Memarylogger memarylogger;
+    private AclCache aclCache;
 
     private HttpProxyClientHeader header = new HttpProxyClientHeader();
     private Channel clientChannel;
@@ -22,6 +27,7 @@ public class HttpProxyClientHandler extends ChannelInboundHandlerAdapter {
     public HttpProxyClientHandler(HttpProxyConfig httpProxyConfig) {
         this.httpProxyConfig = httpProxyConfig;
         this.memarylogger = httpProxyConfig.getMemarylogger();
+        this.aclCache = httpProxyConfig.getAclCache();
     }
 
     @Override
@@ -30,7 +36,7 @@ public class HttpProxyClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (header.isComplete()) {
             remoteChannel.writeAndFlush(msg); // just forward
             return;
@@ -50,6 +56,21 @@ public class HttpProxyClientHandler extends ChannelInboundHandlerAdapter {
         // http隧道创建
         if (header.isHttps()) {
             clientChannel.writeAndFlush(Unpooled.wrappedBuffer("HTTP/1.1 200 Connection Established\r\n\r\n".getBytes()));
+        }
+
+        // ACL 匹配
+        String srcip = ((InetSocketAddress)ctx.channel().remoteAddress()).getAddress().getHostAddress();
+        String destip = InetAddress.getByName(header.getHost()).getHostAddress();
+        String destDomain = ValidateUtil.isIP(header.getHost())?null:header.getHost();
+        if(aclCache.match(srcip,destip,destDomain)==AclCache.REJECT){
+            memarylogger.error("anonymous","ACL Reject for "+srcip + " -> "+destip+"(domain="+destDomain+")",Memarylogger.ACL);
+            httpProxyConfig.getAclStat().incrementAclReject();
+            ctx.close();
+            return;
+        }else{
+            httpProxyConfig.getAclStat().incrementAclAccept();
+            if(httpProxyConfig.isDebug())
+                memarylogger.info("anonymous","ACL Accept for "+srcip + " -> "+destip+"(domain="+destDomain+")",Memarylogger.ACL);
         }
 
         Bootstrap b = new Bootstrap();

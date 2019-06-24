@@ -21,6 +21,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.toughproxy.common.DefaultThreadFactory;
+import org.toughproxy.component.AclCache;
+import org.toughproxy.component.AclStat;
 import org.toughproxy.component.Memarylogger;
 import org.toughproxy.handler.HttpProxyInitializer;
 
@@ -47,9 +49,11 @@ public class HttpProxyConfig {
     @Autowired
     private Memarylogger memarylogger;
 
-    public Memarylogger getMemarylogger() {
-        return memarylogger;
-    }
+    @Autowired
+    private AclCache aclCache;
+
+    @Autowired
+    private AclStat aclStat;
 
     @Autowired
     private HttpProxyInitializer httpProxyInitializer;
@@ -135,6 +139,18 @@ public class HttpProxyConfig {
 
     public void setTcpPort(int tcpPort) {
         this.tcpPort = tcpPort;
+    }
+
+    public Memarylogger getMemarylogger() {
+        return memarylogger;
+    }
+
+    public AclCache getAclCache() {
+        return aclCache;
+    }
+
+    public AclStat getAclStat() {
+        return aclStat;
     }
 
     public int getBossThreads() {

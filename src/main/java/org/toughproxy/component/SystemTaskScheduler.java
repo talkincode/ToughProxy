@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+import org.toughproxy.config.HttpProxyConfig;
 import org.toughproxy.config.SocksProxyConfig;
 
 import java.util.concurrent.TimeUnit;
@@ -28,6 +29,9 @@ public class SystemTaskScheduler  {
     private SocksProxyConfig socksProxyConfig;
 
     @Autowired
+    private HttpProxyConfig httpProxyConfig;
+
+    @Autowired
     private Memarylogger logger;
 
     @Autowired
@@ -46,6 +50,9 @@ public class SystemTaskScheduler  {
     private AclCache aclCache;
 
     @Autowired
+    private AclStat aclStat;
+
+    @Autowired
     private SessionCache sessionCache;
     /**
      * 全局流量统计任务
@@ -54,18 +61,13 @@ public class SystemTaskScheduler  {
     public void updateTrafficStat(){
         systaskExecutor.execute(()->{
             TrafficCounter trafficCounter = socksProxyConfig.getTrafficHandler().trafficCounter();
-            try {
-                TimeUnit.SECONDS.sleep(5);
-            } catch (InterruptedException ignore) {
-
-            }
+            TrafficCounter httpTrafficCounter = httpProxyConfig.getTrafficHandler().trafficCounter();
             final long totalRead = trafficCounter.cumulativeReadBytes();
             final long totalWrite = trafficCounter.cumulativeWrittenBytes();
-            trafficStat.updateRead(totalRead);
-            trafficStat.updateWrite(totalWrite);
-//            logger.print("total read: " + (totalRead >> 10) + " KB");
-//            logger.print("total write: " + (totalWrite >> 10) + " KB");
-//            logger.print("流量监控: " + System.lineSeparator() + trafficCounter);
+            final long httpTotalRead = httpTrafficCounter.cumulativeReadBytes();
+            final long httpTotalWrite = httpTrafficCounter.cumulativeWrittenBytes();
+            trafficStat.updateRead(totalRead+httpTotalRead);
+            trafficStat.updateWrite(totalWrite+httpTotalWrite);
         });
     }
 
@@ -75,6 +77,14 @@ public class SystemTaskScheduler  {
     @Scheduled(fixedDelay = 5000, initialDelay = 5000)
     public void updateSocksStat(){
         socks5Stat.runStat();
+    }
+
+    /**
+     * 消息统计任务
+     */
+    @Scheduled(fixedDelay = 5000, initialDelay = 5000)
+    public void updateAclStat(){
+        aclStat.runStat();
     }
 
     /**

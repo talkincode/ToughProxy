@@ -43,6 +43,9 @@ public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandle
     @Autowired
     private AclCache aclCache;
 
+    @Autowired
+    private AclStat aclStat;
+
     @Override
     public void channelRead0(final ChannelHandlerContext clientChannelContext, final SocksMessage message) throws Exception {
         final Socks4CommandRequest msg = (Socks4CommandRequest) message;
@@ -65,10 +68,11 @@ public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandle
         String destDomain = ValidateUtil.isIP(msg.dstAddr())?null:msg.dstAddr();
         if(aclCache.match(srcip,destip,destDomain)==AclCache.REJECT){
             memarylogger.error("anonymous","ACL Reject for "+srcip + " -> "+destip+"(domain="+destDomain+")",Memarylogger.ACL);
-            socksStat.update(SocksStat.DROP);
+            aclStat.incrementAclReject();
             clientChannelContext.close();
             return;
         }else{
+            aclStat.incrementAclAccept();
             if(socksProxyConfig.isDebug())
                 memarylogger.info("anonymous","ACL Accept for "+srcip + " -> "+destip+"(domain="+destDomain+")",Memarylogger.ACL);
         }

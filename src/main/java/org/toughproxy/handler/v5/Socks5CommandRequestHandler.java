@@ -41,6 +41,9 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
     @Autowired
     private AclCache aclCache;
 
+    @Autowired
+    private AclStat aclStat;
+
     private final static Map<String,Socks5UdpRelay> relayMap = new ConcurrentHashMap<>();
 
     @Override
@@ -65,10 +68,11 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
             String destDomain = ValidateUtil.isIP(msg.dstAddr())?null:msg.dstAddr();
             if(aclCache.match(srcip,destip,destDomain)==AclCache.REJECT){
                 memarylogger.error(username,"ACL Reject for "+srcip + " -> "+destip+"(domain="+destDomain+")",Memarylogger.ACL);
-                socksStat.update(SocksStat.DROP);
+                aclStat.incrementAclReject();
                 clientChannelContext.close();
                 return;
             }else{
+                aclStat.incrementAclAccept();
                 if(socksProxyConfig.isDebug())
                     memarylogger.info(username,"ACL Accept for "+srcip + " -> "+destip+"(domain="+destDomain+")",Memarylogger.ACL);
             }

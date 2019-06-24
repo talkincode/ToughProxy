@@ -12,7 +12,7 @@ import java.util.Enumeration;
 @RestController
 public class TestController {
 
-    @GetMapping("/socktest")
+    @GetMapping("/proxy/test")
     @ResponseBody
     public RestResult sessionHandeler(HttpServletRequest request) throws IOException {
         System.out.println("\n-----------------------------------------------------------");

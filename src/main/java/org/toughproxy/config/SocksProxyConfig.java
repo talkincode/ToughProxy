@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.toughproxy.common.DefaultThreadFactory;
+import org.toughproxy.component.AclStat;
 import org.toughproxy.component.Memarylogger;
 import org.toughproxy.handler.SocksServerInitializer;
 
@@ -47,6 +48,9 @@ public class SocksProxyConfig {
 
     @Autowired
     private Memarylogger memarylogger;
+
+    @Autowired
+    private AclStat aclStat;
 
     @Autowired
     private SocksServerInitializer socksServerInitializer;
@@ -126,6 +130,14 @@ public class SocksProxyConfig {
 
     public void setTrafficHandler(GlobalTrafficShapingHandler trafficHandler) {
         this.trafficHandler = trafficHandler;
+    }
+
+    public Memarylogger getMemarylogger() {
+        return memarylogger;
+    }
+
+    public AclStat getAclStat() {
+        return aclStat;
     }
 
     public int getTcpPort() {

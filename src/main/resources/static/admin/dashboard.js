@@ -254,6 +254,68 @@ toughproxy.admin.dashboard.updateSocksStatChart = function (session,uid) {
     });
 };
 
+toughproxy.admin.dashboard.aclStatChart = function (session,uid) {
+    return {
+        id: uid,
+        view: "highcharts",
+        height:270,
+        credits: {enabled: false},
+        chart: {
+            type: 'areaspline',
+            events: {
+                load: function () {
+                    toughproxy.admin.dashboard.updateAclStatChart(session, uid);
+                }
+            }
+        },
+        title: {
+            text: "ACL 统计",
+            style:{
+                color:"#2f2f31", fontSize:"16px"
+            }
+        },
+        legend: {
+            align: 'center',verticalAlign: 'top',x: 0,y: 0
+        },
+        colors:['#2fcc79', '#9f5346', '#b68c21','#cc5933','#94915e','#fbb079'],
+        xAxis: {type: 'datetime',tickInterval : 300*1000},
+        yAxis: {title: {text: '数量'},
+            labels: {formatter: function() {return this.value;}}
+        },
+        tooltip: {
+            shared: true,
+            pointFormatter: function() {
+                return "<span style='color: "+this.series.color+"'>"+ this.series.name +": <b> "+ this.y + "</b></span><br>";
+            }
+        },
+        plotOptions: {areaspline: {
+                stacking: 'normal',
+                marker: {enabled: false,symbol: 'circle',radius: 2,states: {hover: {enabled: true}}},
+                fillOpacity: 0.7,
+                series: {
+                    pointPlacement: "on"
+                }
+            }},
+        series: [{},{}]
+    }
+};
+
+
+toughproxy.admin.dashboard.updateAclStatChart = function (session,uid) {
+    webix.ajax().get('/admin/acl/stat',{}).then(function (result) {
+        var data = result.json();
+        try {
+            var AclAcceptStat = {name:'允许连接',data:data.AclAcceptStat};
+            var AclRejectStat = {name:'拒绝连接',data:data.AclRejectStat};
+            $$(uid).parse([AclAcceptStat,AclRejectStat]);
+        } catch(e){
+            console.log(e);
+        }
+    }).fail(function (xhr) {
+        webix.message({type: 'error', text: "加载数据失败:"+xhr.statusText,expire:700});
+    });
+};
+
 
 
 toughproxy.admin.dashboard.trafficStatChart = function (session,uid) {
@@ -416,6 +478,7 @@ toughproxy.admin.dashboard.loadPage = function(session){
     var memchartUid = "toughproxy.admin.dashboard.memchart_viewid." + webix.uid();
     var diskchartUid = "toughproxy.admin.dashboard.diskchart_viewid." + webix.uid();
     var socksstatchartid = "toughproxy.admin.dashboard.socksstatchart_view." + webix.uid();
+    var aclstatchartid = "toughproxy.admin.dashboard.aclstatchart_view." + webix.uid();
     var trafficstatchartid = "toughproxy.admin.dashboard.trafficstatchart_viewid." + webix.uid();
     var uptimeid = "toughproxy.admin.dashboard.uptime.label";
     var cview = {
@@ -493,6 +556,7 @@ toughproxy.admin.dashboard.loadPage = function(session){
                                             width:60,
                                             click: function () {
                                                 toughproxy.admin.dashboard.updateSocksStatChart(session,socksstatchartid);
+                                                toughproxy.admin.dashboard.updateAclStatChart(session,aclstatchartid);
                                                 toughproxy.admin.dashboard.updatetrafficStatChart(session,trafficstatchartid);
                                             }
                                         }
@@ -501,6 +565,7 @@ toughproxy.admin.dashboard.loadPage = function(session){
                                 {
                                     rows:[
                                         toughproxy.admin.dashboard.trafficStatChart(session,trafficstatchartid),
+                                        toughproxy.admin.dashboard.aclStatChart(session,aclstatchartid),
                                         toughproxy.admin.dashboard.socksStatChart(session,socksstatchartid)
                                     ]
                                 }
@@ -525,6 +590,7 @@ toughproxy.admin.dashboard.loadPage = function(session){
     var reffunc = function(){
         toughproxy.admin.dashboard.updatetrafficStatChart(session, trafficstatchartid);
         toughproxy.admin.dashboard.updateSocksStatChart(session, socksstatchartid);
+        toughproxy.admin.dashboard.updateAclStatChart(session, aclstatchartid);
     };
     toughproxy.admin.dashboard.msgRefershTimer = setInterval(reffunc,60*1000)
 };
