@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 import org.toughproxy.config.HttpProxyConfig;
 import org.toughproxy.config.SocksProxyConfig;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * 定时任务设计
  */
@@ -38,7 +36,7 @@ public class SystemTaskScheduler  {
     private TrafficStat trafficStat;
 
     @Autowired
-    private SocksStat socks5Stat;
+    private ProxyStat socks5Stat;
 
     @Autowired
     private TicketCache ticketCache;

@@ -10,7 +10,7 @@ import io.netty.handler.codec.socksx.v5.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.toughproxy.component.Memarylogger;
-import org.toughproxy.component.SocksStat;
+import org.toughproxy.component.ProxyStat;
 import org.toughproxy.handler.v4.Socks4ServerConnectHandler;
 import org.toughproxy.config.Constant;
 import org.toughproxy.handler.utils.SocksServerUtils;
@@ -25,7 +25,7 @@ public final class SocksServerHandler extends SimpleChannelInboundHandler<SocksM
 
 
     @Autowired
-    private SocksStat socksStat;
+    private ProxyStat proxyStat;
 
     @Autowired
     private Socks5InitialRequestHandler socks5InitialRequestHandler;
@@ -39,7 +39,7 @@ public final class SocksServerHandler extends SimpleChannelInboundHandler<SocksM
 
         if(socksRequest.decoderResult().isFailure()) {
             memarylogger.error("不是 Socks 协议",Memarylogger.ERROR);
-            socksStat.update(SocksStat.NOT_SUPPORT);
+            proxyStat.update(ProxyStat.NOT_SUPPORT);
             ctx.fireChannelRead(socksRequest);
             return;
         }
@@ -66,7 +66,7 @@ public final class SocksServerHandler extends SimpleChannelInboundHandler<SocksM
                 break;
             case UNKNOWN:
                 memarylogger.error("不是 Socks 协议",Memarylogger.ERROR);
-                socksStat.update(SocksStat.NOT_SUPPORT);
+                proxyStat.update(ProxyStat.NOT_SUPPORT);
                 ctx.close();
                 break;
         }

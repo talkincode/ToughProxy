@@ -4,6 +4,8 @@ public class SocksSession implements Cloneable{
 
     public final static String SOCKS4 = "socks4";
     public final static String SOCKS5 = "socks5";
+    public final static String HTTP = "http";
+    public final static String HTTPS = "https";
 
     private String type;
     private String username;

@@ -27,7 +27,7 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
     private Memarylogger memarylogger;
 
     @Autowired
-    private SocksStat socksStat;
+    private ProxyStat proxyStat;
 
     @Autowired
     private SessionCache sessionCache;
@@ -130,7 +130,7 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
 
         SocksAuthResp resp = checkUserAndPasswd(msg.username(), msg.password());
         if(resp.getCode()==0) {
-            socksStat.update(SocksStat.AUTH_SUCCESS);
+            proxyStat.update(ProxyStat.AUTH_SUCCESS);
             Socks5PasswordAuthResponse passwordAuthResponse = new DefaultSocks5PasswordAuthResponse(Socks5PasswordAuthStatus.SUCCESS);
             ctx.writeAndFlush(passwordAuthResponse).addListener((ChannelFutureListener) future1 ->{
                 if(future1.isSuccess()){
@@ -149,7 +149,7 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
             });
             sessionCache.setUsername(ctx.channel().remoteAddress().toString(),msg.username());
         } else {
-            socksStat.update(SocksStat.AUTH_FAIILURE);
+            proxyStat.update(ProxyStat.AUTH_FAIILURE);
             Socks5PasswordAuthResponse passwordAuthResponse = new DefaultSocks5PasswordAuthResponse(Socks5PasswordAuthStatus.FAILURE);
             ctx.writeAndFlush(passwordAuthResponse).addListener(ChannelFutureListener.CLOSE);
         }

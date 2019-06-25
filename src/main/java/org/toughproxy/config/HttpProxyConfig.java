@@ -21,9 +21,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.toughproxy.common.DefaultThreadFactory;
-import org.toughproxy.component.AclCache;
-import org.toughproxy.component.AclStat;
-import org.toughproxy.component.Memarylogger;
+import org.toughproxy.component.*;
 import org.toughproxy.handler.HttpProxyInitializer;
 
 import javax.annotation.PostConstruct;
@@ -54,6 +52,15 @@ public class HttpProxyConfig {
 
     @Autowired
     private AclStat aclStat;
+
+    @Autowired
+    private ProxyStat proxyStat;
+
+    @Autowired
+    private SessionCache sessionCache;
+
+    @Autowired
+    private TicketCache ticketCache;
 
     @Autowired
     private HttpProxyInitializer httpProxyInitializer;
@@ -151,6 +158,18 @@ public class HttpProxyConfig {
 
     public AclStat getAclStat() {
         return aclStat;
+    }
+
+    public SessionCache getSessionCache() {
+        return sessionCache;
+    }
+
+    public TicketCache getTicketCache() {
+        return ticketCache;
+    }
+
+    public ProxyStat getProxyStat() {
+        return proxyStat;
     }
 
     public int getBossThreads() {

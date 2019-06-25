@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Socks 统计
  */
 @Component
-public class SocksStat {
+public class ProxyStat {
 
     private final static SpinLock lock = new SpinLock();
 

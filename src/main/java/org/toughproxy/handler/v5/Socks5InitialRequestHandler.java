@@ -8,7 +8,7 @@ import io.netty.handler.codec.socksx.v5.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.toughproxy.component.Memarylogger;
-import org.toughproxy.component.SocksStat;
+import org.toughproxy.component.ProxyStat;
 import org.toughproxy.config.Constant;
 import org.toughproxy.config.SocksProxyConfig;
 import org.toughproxy.component.ConfigService;
@@ -22,9 +22,6 @@ public class Socks5InitialRequestHandler extends SimpleChannelInboundHandler<Def
 
     @Autowired
     private SocksProxyConfig socksProxyConfig;
-
-    @Autowired
-    private SocksStat socks5Stat;
 
     @Autowired
     private ConfigService configService;

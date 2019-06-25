@@ -33,7 +33,7 @@ public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandle
     private Memarylogger memarylogger;
 
     @Autowired
-    private SocksStat socksStat;
+    private ProxyStat proxyStat;
 
     @Autowired
     private SessionCache sessionCache;
@@ -46,9 +46,48 @@ public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandle
     @Autowired
     private AclStat aclStat;
 
+    /**
+     * 获取连接会话
+     * @return
+     */
+    private SocksSession getSession(ChannelHandlerContext ctx){
+        return sessionCache.getSession((InetSocketAddress) ctx.channel().remoteAddress());
+    }
+
+    /**
+     * 创建会话对象
+     * @return
+     */
+    private SocksSession createSession(ChannelHandlerContext ctx){
+        SocksSession session = new SocksSession();
+        session.setType(SocksSession.SOCKS4);
+        InetSocketAddress inetSrcaddr = (InetSocketAddress)ctx.channel().remoteAddress();
+        session.setUsername(sessionCache.getUsername(ctx.channel().remoteAddress().toString()));
+        session.setSrcAddr(inetSrcaddr.getHostString());
+        session.setSrcPort(inetSrcaddr.getPort());
+        session.setStartTime(DateTimeUtil.getDateTimeString());
+        sessionCache.addSession(session);
+        return session;
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+        createSession(ctx);
+    }
+
     @Override
     public void channelRead0(final ChannelHandlerContext clientChannelContext, final SocksMessage message) throws Exception {
         final Socks4CommandRequest msg = (Socks4CommandRequest) message;
+
+        //更新连接会话
+        SocksSession session = getSession(clientChannelContext);
+        if(session==null){
+            session = createSession(clientChannelContext);
+        }
+        session.setDstAddr(msg.dstAddr());
+        session.setDstPort(msg.dstPort());
+
         String targetDesc = msg.type() + "," + msg.dstAddr() + "," + msg.dstPort();
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(clientChannelContext.channel().eventLoop())
@@ -87,26 +126,15 @@ public final class Socks4ServerConnectHandler extends SimpleChannelInboundHandle
                 if(socksProxyConfig.isDebug())
                     memarylogger.print("【Socks4】2-成功连接目标服务器 : "+targetDesc);
 
-                socksStat.update(SocksStat.CONNECT_SUCCESS);
+                proxyStat.update(ProxyStat.CONNECT_SUCCESS);
                 clientChannelContext.pipeline().addLast(new Socks4ServerConnectHandler.Client2DestHandler(future1));
                 Socks4CommandResponse commandResponse = new DefaultSocks4CommandResponse(Socks4CommandStatus.SUCCESS);
                 clientChannelContext.writeAndFlush(commandResponse);
 
-                SocksSession session = new SocksSession();
-                session.setType(SocksSession.SOCKS4);
-                InetSocketAddress inetSrcaddr = (InetSocketAddress)clientChannelContext.channel().remoteAddress();
-                session.setUsername("anonymous");
-                session.setSrcAddr(inetSrcaddr.getHostString());
-                session.setSrcPort(inetSrcaddr.getPort());
-                session.setDstAddr(msg.dstAddr());
-                session.setDstPort(msg.dstPort());
-                session.setStartTime(DateTimeUtil.getDateTimeString());
-                sessionCache.addSession(session);
-
             } else {
                 if(socksProxyConfig.isDebug())
                     memarylogger.print("【Socks4】2-连接目标服务器 "+targetDesc+" 失败");
-                socksStat.update(SocksStat.CONNECT_FAILURE);
+                proxyStat.update(ProxyStat.CONNECT_FAILURE);
                 SocksServerUtils.closeOnFlush(clientChannelContext.channel());
             }
         });

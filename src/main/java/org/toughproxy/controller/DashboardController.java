@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.toughproxy.component.AclStat;
-import org.toughproxy.component.SocksStat;
+import org.toughproxy.component.ProxyStat;
 import org.toughproxy.common.DateTimeUtil;
 import org.toughproxy.common.RestResult;
 import org.toughproxy.common.SystemUtil;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class DashboardController {
 
     @Autowired
-    private SocksStat socks5Stat;
+    private ProxyStat socks5Stat;
     @Autowired
     private TrafficStat trafficStat;
     @Autowired

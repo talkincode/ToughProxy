@@ -25,17 +25,19 @@ public class SessionCache {
     @Autowired
     private Memarylogger logger;
 
+    public Map<String, SocksSession> getCacheData() {
+        return cacheData;
+    }
+
     public void setUsername(String key, String username){
         usernameCache.put(key,username);
     }
 
     public String getUsername(String key){
-        return usernameCache.get(key);
+        String username = usernameCache.get(key);
+        return ValidateUtil.isEmpty(username)?"anonymous":username;
     }
 
-    public void removeUsername(String key){
-        usernameCache.remove(key);
-    }
 
     public void addSession(SocksSession session){
         cacheData.put(session.getKey(),session);
@@ -47,12 +49,28 @@ public class SessionCache {
 
     public void updateUpBytes(String key,Long bytes){
         SocksSession session = cacheData.get(key);
-        session.setUpBytes(session.getUpBytes()+bytes);
+        if(session!=null)
+            session.setUpBytes(session.getUpBytes()+bytes);
     }
 
     public void updateDownBytes(String key,Long bytes){
         SocksSession session = cacheData.get(key);
-        session.setDownBytes(session.getDownBytes()+bytes);
+        if(session!=null)
+            session.setDownBytes(session.getDownBytes()+bytes);
+    }
+
+    public void updateUpBytes(InetSocketAddress clientaddr,Long bytes){
+        try{
+            String key = clientaddr.getHostString()+ ":"+clientaddr.getPort();
+            updateUpBytes(key,bytes);
+        }catch (Exception ignore){}
+    }
+
+    public void updateDownBytes(InetSocketAddress clientaddr,Long bytes){
+        try{
+            String key = clientaddr.getHostString()+ ":"+clientaddr.getPort();
+            updateDownBytes(key,bytes);
+        }catch (Exception ignore){}
     }
 
     public SocksSession stopSession(String key){
@@ -60,6 +78,11 @@ public class SessionCache {
         if(session!=null)
             session.setEndTime(DateTimeUtil.getDateTimeString());
         return session;
+    }
+
+    public SocksSession getSession(InetSocketAddress addr){
+        String key = addr.getHostString()+ ":"+addr.getPort();
+        return cacheData.get(key);
     }
 
     public SocksSession stopSession(InetSocketAddress addr){
