@@ -30,3 +30,9 @@
 ## 运行服务
 
 > systemctl start toughproxy
+
+## WEB 管理访问
+
+打开浏览器访问 http://服务器地址:1823
+
+进入登录页面， 默认管理员用户名密码 admin root

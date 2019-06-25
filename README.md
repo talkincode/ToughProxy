@@ -153,7 +153,7 @@ ToughProxy 是一个代理服务器， 目标是提供一个综合性的代理�
     systemctl enable toughproxy
     systemctl start toughproxy
     
-## 浏览器访问
+## WEB 管理访问
 
 打开浏览器访问 http://服务器地址:1823
 
