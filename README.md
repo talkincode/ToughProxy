@@ -1,4 +1,6 @@
-![](http://static.toughcloud.net/toughsms/20190624232022.png)
+[![](https://travis-ci.org/talincode/ToughProxy.svg?branch=master)](https://travis-ci.org/talincode/ToughProxy)
+
+****![](http://static.toughcloud.net/toughsms/20190624232022.png)
 
 # ToughProxy
 
@@ -150,6 +152,12 @@ ToughProxy 是一个代理服务器， 目标是提供一个综合性的代理�
 
     systemctl enable toughproxy
     systemctl start toughproxy
+    
+## 浏览器访问
+
+打开浏览器访问 http://服务器地址:1823
+
+进入登录页面， 默认管理员用户名密码 admin root
     
 ## 意见反馈
 
