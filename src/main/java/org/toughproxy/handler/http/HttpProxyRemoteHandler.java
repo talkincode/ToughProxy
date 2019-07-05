@@ -27,7 +27,7 @@ public class HttpProxyRemoteHandler extends ChannelInboundHandlerAdapter {
         this.clientChannel = clientChannel;
         this.httpProxyConfig = httpProxyConfig;
         this.memarylogger = httpProxyConfig.getMemarylogger();
-        this.sessionCache = httpProxyConfig.getSessionCache();
+        this.sessionCache = httpProxyConfig.getLocalSessionCache();
     }
 
     @Override

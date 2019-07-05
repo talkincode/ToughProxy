@@ -34,7 +34,7 @@ public class HttpProxyClientHandler extends ChannelInboundHandlerAdapter {
         this.httpProxyConfig = httpProxyConfig;
         this.memarylogger = httpProxyConfig.getMemarylogger();
         this.aclCache = httpProxyConfig.getAclCache();
-        this.sessionCache = httpProxyConfig.getSessionCache();
+        this.sessionCache = httpProxyConfig.getLocalSessionCache();
         this.aclStat = httpProxyConfig.getAclStat();
         this.proxyStat = httpProxyConfig.getProxyStat();
     }

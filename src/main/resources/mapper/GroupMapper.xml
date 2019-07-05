@@ -9,11 +9,12 @@
         <result column="up_limit" jdbcType="INTEGER" property="upLimit" />
         <result column="down_limit" jdbcType="INTEGER" property="downLimit" />
         <result column="max_session" jdbcType="INTEGER" property="maxSession" />
+        <result column="max_client" jdbcType="INTEGER" property="maxClient" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
     </resultMap>
 
     <sql id="Base_Column_List">
-		id, `name`,status, up_limit, down_limit, max_session, remark
+		id, `name`,status, up_limit, down_limit, max_session, max_client, remark
 	</sql>
 
     <select id="queryForList" parameterType="org.toughproxy.entity.Group" resultMap="BaseResultMap" useCache="true">
@@ -25,6 +26,7 @@
             <if test="upLimit != null  and upLimit != '' "> and up_limit = #{upLimit}</if>
             <if test="downLimit != null  and downLimit != '' "> and down_limit = #{downLimit}</if>
             <if test="maxSession != null  and maxSession != '' "> and max_session = #{maxSession}</if>
+            <if test="maxClient != null  and maxClient != '' "> and max_client = #{maxClient}</if>
             <if test="remark != null  and remark != '' "> and remark like CONCAT('%',#{remark},'%') </if>
         </where>
     </select>
@@ -37,6 +39,7 @@
             <if test="upLimit != null  and upLimit != ''  ">up_limit,</if>
             <if test="downLimit != null  and downLimit != ''  ">down_limit,</if>
             <if test="maxSession != null  and maxSession != ''  ">max_session,</if>
+            <if test="maxClient != null  and maxClient != ''  ">max_client,</if>
             <if test="remark != null  and remark != ''  ">remark,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -45,6 +48,7 @@
             <if test="upLimit != null  and upLimit != ''  ">#{upLimit},</if>
             <if test="downLimit != null  and downLimit != ''  ">#{downLimit},</if>
             <if test="maxSession != null  and maxSession != ''  ">#{maxSession},</if>
+            <if test="maxClient != null  and maxClient != ''  ">#{maxClient},</if>
             <if test="remark != null  and remark != ''  ">#{remark},</if>
         </trim>
     </insert>
@@ -57,6 +61,7 @@
             <if test="upLimit != null  and upLimit != ''  ">up_limit = #{upLimit},</if>
             <if test="downLimit != null  and downLimit != ''  ">down_limit = #{downLimit},</if>
             <if test="maxSession != null  and maxSession != ''  ">max_session = #{maxSession},</if>
+            <if test="maxClient != null  and maxClient != ''  ">max_client = #{maxClient},</if>
             <if test="remark != null ">remark = #{remark},</if>
         </trim>
         where id = #{id}

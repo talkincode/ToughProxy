@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.toughproxy.common.PageResult;
 import org.toughproxy.component.Memarylogger;
-import org.toughproxy.entity.SocksSession;
 import org.toughproxy.component.SessionCache;
+import org.toughproxy.entity.SocksSession;
 
 import java.util.ArrayList;
 

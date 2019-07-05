@@ -14,12 +14,12 @@
         <result column="password" jdbcType="VARCHAR" property="password" />
         <result column="mobile" jdbcType="VARCHAR" property="mobile" />
         <result column="email" jdbcType="VARCHAR" property="email" />
-        <result column="policy" jdbcType="VARCHAR" property="policy" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="status" jdbcType="INTEGER" property="status" />
         <result column="up_limit" jdbcType="INTEGER" property="upLimit" />
         <result column="down_limit" jdbcType="INTEGER" property="downLimit" />
         <result column="max_session" jdbcType="INTEGER" property="maxSession" />
+        <result column="max_client" jdbcType="INTEGER" property="maxClient" />
         <result column="group_status" jdbcType="INTEGER" property="groupStatus" />
         <result column="group_up_limit" jdbcType="INTEGER" property="groupUpLimit" />
         <result column="group_down_limit" jdbcType="INTEGER" property="groupDownLimit" />
@@ -43,14 +43,11 @@
 		up_limit,
 		down_limit,
 		max_session,
+		max_client,
 		create_time,
 		expire_time,
 		update_time
 	</sql>
-
-    <select id="findAllUsername"  resultType="java.lang.String" useCache="false">
-		SELECT username FROM ts_user WHERE status = 1
-	</select>
 
 
     <select id="findById"  resultType="java.lang.Long" resultMap="BaseResultMap" useCache="false">
@@ -85,6 +82,7 @@
 		tu.up_limit,
 		tu.down_limit,
 		tu.max_session,
+		tu.max_client,
 		tg.status as group_status,
 		tg.up_limit as group_up_limit,
 		tg.down_limit as group_down_limit,
@@ -114,16 +112,12 @@
             <if test="upLimit != null  and upLimit != '' "> and up_limit = #{upLimit}</if>
             <if test="downLimit != null  and downLimit != '' "> and down_limit = #{downLimit}</if>
             <if test="maxSession != null  and maxSession != '' "> and max_session = #{maxSession}</if>
+            <if test="maxClient != null  and maxClient != '' "> and max_client = #{maxClient}</if>
             <if test="keyword != null  and keyword != '' "> and username like CONCAT('%',#{keyword},'%')</if>
             <if test="expireTime != null and expireTime != '' "> and expire_time &lt;= #{expireTime}</if>
             <if test="remark != null  and remark != '' "> and remark like CONCAT('%',#{remark},'%') </if>
         </where>
     </sql>
-
-    <select id="queryTotal" parameterType="org.toughproxy.form.UserQuery" resultType="integer" useCache="false">
-        SELECT count(*) FROM  ts_user
-        <include refid="query_where" />
-    </select>
 
     <select id="queryForList" parameterType="org.toughproxy.form.UserQuery" resultMap="BaseResultMap" useCache="false">
         SELECT
@@ -148,6 +142,7 @@
             <if test="upLimit != null  and upLimit != ''  ">up_limit,</if>
             <if test="downLimit != null  and downLimit != ''  ">down_limit,</if>
             <if test="maxSession != null  and maxSession != ''  ">max_session,</if>
+            <if test="maxClient != null  and maxClient != ''  ">max_client,</if>
             <if test="createTime != null ">create_time,</if>
             <if test="expireTime != null ">expire_time,</if>
             <if test="updateTime != null ">update_time,</if>
@@ -166,6 +161,7 @@
             <if test="upLimit != null  and upLimit != ''  ">#{upLimit},</if>
             <if test="downLimit != null  and downLimit != ''  ">#{downLimit},</if>
             <if test="maxSession != null  and maxSession != ''  ">#{maxSession},</if>
+            <if test="maxClient != null  and maxClient != ''  ">#{maxClient},</if>
             <if test="createTime != null   ">#{createTime},</if>
             <if test="expireTime != null   ">#{expireTime},</if>
             <if test="updateTime != null   ">#{updateTime},</if>
@@ -187,6 +183,7 @@
             <if test="upLimit != null  ">up_limit = #{upLimit},</if>
             <if test="downLimit != null ">down_limit = #{downLimit},</if>
             <if test="maxSession != null ">max_session = #{maxSession},</if>
+            <if test="maxClient != null ">max_client = #{maxClient},</if>
             <if test="expireTime != null ">expire_time = #{expireTime},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
         </trim>

@@ -1,6 +1,8 @@
 package org.toughproxy.entity;
 
-public class SocksSession implements Cloneable{
+import java.io.Serializable;
+
+public class SocksSession implements Cloneable, Serializable {
 
     public final static String SOCKS4 = "socks4";
     public final static String SOCKS5 = "socks5";

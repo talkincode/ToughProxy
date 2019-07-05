@@ -21,6 +21,7 @@ public class User {
     private Integer upLimit;
     private Integer downLimit;
     private Integer maxSession;
+    private Integer maxClient;
     private Integer groupStatus;
     private Integer groupUpLimit;
     private Integer groupDownLimit;
@@ -124,6 +125,14 @@ public class User {
 
     public void setMaxSession(Integer maxSession) {
         this.maxSession = maxSession;
+    }
+
+    public Integer getMaxClient() {
+        return maxClient;
+    }
+
+    public void setMaxClient(Integer maxClient) {
+        this.maxClient = maxClient;
     }
 
     public Timestamp getExpireTime() {

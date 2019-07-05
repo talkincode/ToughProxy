@@ -98,7 +98,7 @@ public class SystemTaskScheduler  {
      */
     @Scheduled(fixedDelay = 30 * 1000)
     public void clearExpire() {
-        systaskExecutor.execute(()->sessionCache.clearExpireSession());
+        systaskExecutor.execute(()-> sessionCache.clearExpireSession());
     }
 
 

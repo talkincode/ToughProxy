@@ -160,7 +160,7 @@ public class HttpProxyConfig {
         return aclStat;
     }
 
-    public SessionCache getSessionCache() {
+    public SessionCache getLocalSessionCache() {
         return sessionCache;
     }
 

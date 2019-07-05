@@ -10,6 +10,13 @@ public class ValidateCache {
     private ConcurrentHashMap<String,Counter> cacheData = new ConcurrentHashMap<String,Counter>();
     private int timems = 60 * 1000;
     private int maxTimes = 5;
+    private long lastInvoke = System.currentTimeMillis();
+
+    private SpinLock lock = new SpinLock();
+
+    public long getLastInvoke() {
+        return lastInvoke;
+    }
 
     public int getMaxTimes() {
         return maxTimes;
@@ -29,34 +36,50 @@ public class ValidateCache {
     }
 
     public void incr(String key){
-        if(cacheData.containsKey(key)){
-            cacheData.get(key).incr();
-        }else{
-            cacheData.put(key, new Counter());
+        lastInvoke = System.currentTimeMillis();
+        try{
+            lock.lock();
+            if(cacheData.containsKey(key)){
+                cacheData.get(key).incr();
+            }else{
+                cacheData.put(key, new Counter());
+            }
+        }finally {
+            lock.unLock();
         }
     }
 
     public int errors(String key){
-        if(cacheData.containsKey(key)){
-            return cacheData.get(key).getTotal();
-        }else{
-            return 0;
+        lastInvoke = System.currentTimeMillis();
+        try{
+            lock.lock();
+            if(cacheData.containsKey(key)){
+                return cacheData.get(key).getTotal();
+            }else{
+                return 0;
+            }
+        }finally {
+            lock.unLock();
         }
     }
 
     public boolean isOver(String key){
-        if(!cacheData.containsKey(key)){
-            return false;
-        }
-        Counter count = cacheData.get(key);
-        long ctimes = System.currentTimeMillis() - count.getStartTime();
-        if(ctimes > this.timems){
-            synchronized (cacheData){
-                cacheData.remove(key);
+        lastInvoke = System.currentTimeMillis();
+        try{
+            lock.lock();
+            if(!cacheData.containsKey(key)){
+                return false;
             }
-            return false;
-        }else{
-            return count.getTotal() > this.maxTimes;
+            Counter count = cacheData.get(key);
+            long ctimes = System.currentTimeMillis() - count.getStartTime();
+            if(ctimes > this.timems){
+                cacheData.remove(key);
+                return false;
+            }else{
+                return count.getTotal() > this.maxTimes;
+            }
+        }finally {
+            lock.unLock();
         }
 
     }
@@ -67,8 +90,11 @@ public class ValidateCache {
             Counter count = it.next();
             long ctimes = System.currentTimeMillis() - count.getStartTime();
             if(ctimes > this.timems){
-                synchronized (cacheData){
-                   it.remove();
+                try {
+                    lock.lock();
+                    it.remove();
+                }finally {
+                    lock.unLock();
                 }
             }
         }

@@ -53,4 +53,8 @@
         <appender-ref ref="console"/>
     </logger>
 
+    <logger name="org.springframework.remoting" level="info" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+
 </configuration>

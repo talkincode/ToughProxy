@@ -15,6 +15,7 @@ public class SocksAuthResp {
     private int upLimit;
     private int downLimit;
     private int maxSession;
+    private int maxClient;
 
     public SocksAuthResp() {
     }
@@ -68,6 +69,14 @@ public class SocksAuthResp {
         this.maxSession = maxSession;
     }
 
+    public int getMaxClient() {
+        return maxClient;
+    }
+
+    public void setMaxClient(int maxClient) {
+        this.maxClient = maxClient;
+    }
+
     @Override
     public String toString() {
         return "SocksAuthResp{" +
@@ -76,6 +85,7 @@ public class SocksAuthResp {
                 ", upLimit=" + upLimit +
                 ", downLimit=" + downLimit +
                 ", maxSession=" + maxSession +
+                ", maxClient=" + maxClient +
                 '}';
     }
 }

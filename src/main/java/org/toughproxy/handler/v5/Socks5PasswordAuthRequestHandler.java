@@ -8,6 +8,7 @@ import io.netty.handler.codec.socksx.v5.*;
 import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.toughproxy.common.ValidateCache;
 import org.toughproxy.component.*;
 import org.toughproxy.config.Constant;
 import org.toughproxy.config.SocksProxyConfig;
@@ -15,6 +16,10 @@ import org.toughproxy.common.DateTimeUtil;
 import org.toughproxy.common.SocksRadiusClient;
 import org.toughproxy.entity.SocksAuthResp;
 import org.toughproxy.entity.User;
+
+import java.net.InetSocketAddress;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @ChannelHandler.Sharable
@@ -40,6 +45,21 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
 
     @Autowired
     private Socks5CommandRequestHandler Socks5CommandRequestHandler;
+
+    private final static Map<String, ValidateCache> validateMap = new ConcurrentHashMap<>();
+
+    private ValidateCache getUserValidateCache(String username, int limit){
+        ValidateCache v = validateMap.get(username);
+        if(v.getMaxTimes()!=limit){
+            validateMap.remove(username);
+            v = null;
+        }
+        if(v == null){
+            v = new ValidateCache(3 * 60 *1000,limit);
+        }
+        validateMap.put(username,v);
+        return v;
+    }
 
     /**
      * RADIUS 认证
@@ -141,7 +161,16 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
                         ctx.pipeline().addLast(new Socks5CommandRequestDecoder());
                         ctx.pipeline().addLast(Socks5CommandRequestHandler);
                     }else{
-                        memarylogger.error(msg.username(), "【socks5】用户并发超过限制", Memarylogger.SOCKS5);
+                        memarylogger.error(msg.username(), "【socks5】用户并发超过限制:"+resp.getMaxSession(), Memarylogger.SOCKS5);
+                    }
+
+                    if(resp.getMaxClient()>0){
+                        ValidateCache vc = getUserValidateCache(msg.username(), resp.getMaxClient());
+                        String srcaddr = ((InetSocketAddress)ctx.channel().remoteAddress()).getHostString();
+                        vc.incr(srcaddr);
+                        if(vc.isOver(srcaddr)){
+                            memarylogger.error(msg.username(), "【socks5】用户3分钟内客户端数量超过限制:"+resp.getMaxClient(), Memarylogger.SOCKS5);
+                        }
                     }
                 }else{
                     ctx.close();

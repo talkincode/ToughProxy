@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS `ts_user` (
   `up_limit` int(10) unsigned DEFAULT NULL,
   `down_limit` int(10) unsigned DEFAULT NULL,
   `max_session` int(10) unsigned DEFAULT NULL,
+  `max_client` int(10) unsigned DEFAULT NULL,
   `create_time` timestamp NULL DEFAULT NULL,
   `update_time` timestamp NULL DEFAULT NULL,
   `expire_time` timestamp NULL DEFAULT NULL,

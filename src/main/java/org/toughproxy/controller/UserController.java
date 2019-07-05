@@ -97,6 +97,7 @@ public class UserController {
             user.setStatus(1);
             user.setGroupPolicy(1);
             user.setMaxSession(group.getMaxSession());
+            user.setMaxClient(group.getMaxClient());
             user.setUpLimit(group.getUpLimit());
             user.setDownLimit(group.getDownLimit());
             userMapper.insertUser(user);
@@ -128,6 +129,7 @@ public class UserController {
                     user.setStatus(1);
                     user.setGroupPolicy(1);
                     user.setMaxSession(group.getMaxSession());
+                    user.setMaxClient(group.getMaxClient());
                     user.setUpLimit(group.getUpLimit());
                     user.setDownLimit(group.getDownLimit());
                     buserMapper.insertUser(user);

@@ -112,6 +112,7 @@ toughproxy.admin.group.loadPage = function(session,keyword){
                                         }
                                     },
                                     { id: "maxSession", header: ["最大在线"],adjust:true},
+                                    { id: "maxClient", header: ["最大客户端"],adjust:true},
                                     { id: "upLimit", header: ["上行限速(KB)"],adjust:true},
                                     { id: "downLimit", header: ["下行限速(KB)"],adjust:true},
                                     { id: "remark", header: ["备注"],fillspace:true},
@@ -227,8 +228,9 @@ toughproxy.admin.group.newGroupForm = function(session,callback){
                     elements: [
                         { view: "text", name: "name", label: "名称",validate:webix.rules.isNotEmpty},
                         { view: "text", name: "maxSession", label: "最大连接数",  validate:webix.rules.isNumber},
-                        { view: "text", name: "upLimit", label: "上行限速",  validate:webix.rules.isNumber },
-                        { view: "text", name: "downLimit", label: "下行限速",   validate:webix.rules.isNumber},
+                        { view: "text", name: "maxClient", label: "最大客户端数",  validate:webix.rules.isNumber},
+                        { view: "text", name: "upLimit", label: "上行限速(kb)",  validate:webix.rules.isNumber },
+                        { view: "text", name: "downLimit", label: "下行限速(kb)",   validate:webix.rules.isNumber},
                         { view:"textarea", name:"remark", height:140, label:"描述"},
                     ]
                 },
@@ -315,8 +317,9 @@ toughproxy.admin.group.grpUpdate = function(session,item,callback){
                         { view: "radio", name: "status", label: "状态", value: item.status, options: [{ id: '1', value: "正常" }, { id: '0', value: "停用" }] },
                         { view: "text", name: "name", label: "名称", value: item.name, validate:webix.rules.isNotEmpty},
                         { view: "text", name: "maxSession", label: "最大连接数", value:item.maxSession, validate:webix.rules.isNumber},
-                        { view: "text", name: "upLimit", label: "上行限速",  value:item.upLimit,validate:webix.rules.isNumber },
-                        { view: "text", name: "downLimit", label: "下行限速",   value:item.downLimit,validate:webix.rules.isNumber},
+                        { view: "text", name: "maxClient", label: "最大客户端数", value:item.maxClient, validate:webix.rules.isNumber},
+                        { view: "text", name: "upLimit", label: "上行限速(kb)",  value:item.upLimit,validate:webix.rules.isNumber },
+                        { view: "text", name: "downLimit", label: "下行限速(kb)",   value:item.downLimit,validate:webix.rules.isNumber},
                         { view:"textarea", name:"remark", height:140, label:"描述", value:item.remark},
                     ]
                 },

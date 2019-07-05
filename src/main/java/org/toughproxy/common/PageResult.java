@@ -1,8 +1,9 @@
 package org.toughproxy.common;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PageResult<T> {
+public class PageResult<T> implements Serializable {
     private long pos;
     private long total_count;
     private List<T> data;

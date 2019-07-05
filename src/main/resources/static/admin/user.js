@@ -463,8 +463,8 @@ toughproxy.admin.user.userUpdate = function(session,item,callback){
                         },
                         { view: "radio", name: "group_policy", label: "用户组策略", value: subs.groupPolicy, options: [{ id: '0', value: "否" }, { id: '1', value: "是" }] },
                         { view: "text", name: "maxSession", label: "最大连接数",  value: subs.maxSession },
-                        { view: "text", name: "upLimit", label: "上行限速",  value: subs.upLimit },
-                        { view: "text", name: "downLimit", label: "下行限速",  value: subs.downLimit },
+                        { view: "text", name: "upLimit", label: "上行限速(kb)",  value: subs.upLimit },
+                        { view: "text", name: "downLimit", label: "下行限速(kb)",  value: subs.downLimit },
                         {
                             cols:[
                                 { view: "textarea", name: "remark", label: "备注",value: subs.remark, height: 80 }
