@@ -203,7 +203,7 @@ toughproxy.admin.dashboard.socksStatChart = function (session,uid) {
             }
         },
         title: {
-            text: "Socks 统计",
+            text: "Proxy 统计",
             style:{
                 color:"#2f2f31", fontSize:"16px"
             }
@@ -269,7 +269,7 @@ toughproxy.admin.dashboard.aclStatChart = function (session,uid) {
             }
         },
         title: {
-            text: "ACL 统计",
+            text: "Acl 统计",
             style:{
                 color:"#2f2f31", fontSize:"16px"
             }

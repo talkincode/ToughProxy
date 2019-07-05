@@ -29,7 +29,6 @@ public class ApplicationConfig {
     private String version;
     private String ticketDir;
     private String rmiMaster;
-    private String rmiHost;
     private String rmiRole;
     private int rmiPort;
 
@@ -135,11 +134,4 @@ public class ApplicationConfig {
         this.rmiRole = rmiRole;
     }
 
-    public String getRmiHost() {
-        return rmiHost;
-    }
-
-    public void setRmiHost(String rmiHost) {
-        this.rmiHost = rmiHost;
-    }
 }

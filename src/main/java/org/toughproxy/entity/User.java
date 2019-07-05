@@ -26,6 +26,7 @@ public class User {
     private Integer groupUpLimit;
     private Integer groupDownLimit;
     private Integer groupMaxSession;
+    private Integer groupMaxClient;
     private Timestamp expireTime;
     private Timestamp createTime;
     private Timestamp updateTime;
@@ -197,5 +198,13 @@ public class User {
 
     public void setGroupMaxSession(Integer groupMaxSession) {
         this.groupMaxSession = groupMaxSession;
+    }
+
+    public Integer getGroupMaxClient() {
+        return groupMaxClient;
+    }
+
+    public void setGroupMaxClient(Integer groupMaxClient) {
+        this.groupMaxClient = groupMaxClient;
     }
 }

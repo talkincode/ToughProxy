@@ -66,6 +66,12 @@ public class SocksRadiusClient extends RadiusClient implements Constant {
             }
 
             try{
+                sresp.setMaxClient(resp.getVendorAttribute(RADIUS_VENDOR,RADIUS_MAX_CLIENT_ATTR_TYPE).getIntValue());
+            }catch (Exception e){
+                logger.error("RADIUS 认证请求读取用户并发客户端数失败");
+            }
+
+            try{
                 sresp.setMessage(resp.getAttribute(18).getStringValue());
             }catch (Exception ignore){
             }

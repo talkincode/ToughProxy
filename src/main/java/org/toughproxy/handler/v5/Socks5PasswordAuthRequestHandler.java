@@ -117,10 +117,12 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
         SocksAuthResp resp =  new SocksAuthResp(0);
         if(user.getGroupPolicy()==1){
             resp.setMaxSession(user.getGroupMaxSession());
+            resp.setMaxClient(user.getGroupMaxClient());
             resp.setUpLimit(user.getGroupUpLimit());
             resp.setDownLimit(user.getGroupDownLimit());
         }else{
             resp.setMaxSession(user.getMaxSession());
+            resp.setMaxClient(user.getMaxClient());
             resp.setUpLimit(user.getUpLimit());
             resp.setDownLimit(user.getDownLimit());
         }

@@ -24,6 +24,7 @@
         <result column="group_up_limit" jdbcType="INTEGER" property="groupUpLimit" />
         <result column="group_down_limit" jdbcType="INTEGER" property="groupDownLimit" />
         <result column="group_max_session" jdbcType="INTEGER" property="groupMaxSession" />
+        <result column="group_max_client" jdbcType="INTEGER" property="groupMaxClient" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
@@ -87,6 +88,7 @@
 		tg.up_limit as group_up_limit,
 		tg.down_limit as group_down_limit,
 		tg.max_session as group_max_session,
+		tg.max_client as group_max_client,
 		tu.create_time,
 		tu.expire_time,
 		tu.update_time

@@ -35,6 +35,7 @@ public interface Constant {
     public final static int RADIUS_UP_LIMIT_ATTR_TYPE = 1;
     public final static int RADIUS_DOWN_LIMIT_ATTR_TYPE = 2;
     public final static int RADIUS_MAX_SESSION_ATTR_TYPE = 3;
+    public final static int RADIUS_MAX_CLIENT_ATTR_TYPE = 4;
 
     public final static String ACL_ACCEPT_DESC = "accept";
     public final static String ACL_REJECT_DESC = "reject";
