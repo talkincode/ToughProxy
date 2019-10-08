@@ -1,5 +1,4 @@
 package org.toughproxy.controller;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +15,6 @@ import org.toughproxy.common.RestResult;
 import org.toughproxy.common.ValidateUtil;
 import org.toughproxy.component.ConfigService;
 import org.toughproxy.entity.Config;
-
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -49,6 +47,7 @@ public class MainController implements Constant {
         MenuItem groupItem = new MenuItem("group", "users", "用户组");
         MenuItem userItem = new MenuItem("user", "user", "用户管理");
         MenuItem sessionItem = new MenuItem("session", "link", "连接查询");
+        MenuItem ippoolItem = new MenuItem("ippool", "table", "IP池管理");
         MenuItem ticketItem = new MenuItem("ticket", "table", "网络日志");
         MenuItem syslogItem = new MenuItem("syslog", "hdd-o", "系统日志");
         menuItems.add(dashboardItem);
@@ -57,6 +56,7 @@ public class MainController implements Constant {
         menuItems.add(groupItem);
         menuItems.add(userItem);
         menuItems.add(sessionItem);
+        menuItems.add(ippoolItem);
         menuItems.add(ticketItem);
         menuItems.add(syslogItem);
         return menuItems;

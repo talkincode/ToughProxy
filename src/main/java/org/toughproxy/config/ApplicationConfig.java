@@ -16,6 +16,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.toughproxy.common.MockRemoteExporter;
 import org.toughproxy.common.MockRmiProxyFactoryBean;
 import org.toughproxy.common.ValidateUtil;
+import org.toughproxy.common.shell.LocalCommandExecutor;
+import org.toughproxy.common.shell.LocalCommandExecutorImpl;
 import org.toughproxy.component.LocalSessionCache;
 import org.toughproxy.component.Memarylogger;
 import org.toughproxy.component.SessionCache;
@@ -40,7 +42,7 @@ public class ApplicationConfig {
 
     @Bean
     public RemoteExporter registerRMIExporter() {
-        if(getRmiPort()>0){
+        if("server".equals(getRmiRole()) && getRmiPort()>0){
             RmiServiceExporter exporter = new RmiServiceExporter();
             exporter.setServiceName("sessioncache");
             exporter.setServiceInterface(SessionCache.class);
@@ -55,7 +57,7 @@ public class ApplicationConfig {
 
     @Bean
     public RmiProxyFactoryBean rmiProxyFactoryBean() {
-        if("client".equals(getRmiRole()) && ValidateUtil.isNotEmpty(getRmiMaster())){
+        if("client".equals(getRmiRole()) && ValidateUtil.isNotEmpty(getRmiMaster()) && !getRmiMaster().contains("0.0.0.0:0")){
             RmiProxyFactoryBean rmiProxyFactoryBean = new RmiProxyFactoryBean();
             rmiProxyFactoryBean.setServiceUrl(getRmiMaster());
             rmiProxyFactoryBean.setServiceInterface(SessionCache.class);
@@ -88,6 +90,10 @@ public class ApplicationConfig {
         return sysTaskExecutor;
     }
 
+    @Bean
+    public LocalCommandExecutor localCommandExecutor(){
+        return new LocalCommandExecutorImpl();
+    }
 
     @Bean
     public Gson gson(){

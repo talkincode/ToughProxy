@@ -54,7 +54,7 @@ public class GroupController {
         }
     }
 
-    @GetMapping(value = {"/api/v6/group/query","/admin/group/query"})
+    @GetMapping(value = {"/api/group/query","/admin/group/query"})
     @ResponseBody
     public PageResult<Group> queryGroup(@RequestParam(defaultValue = "0") int start, @RequestParam(defaultValue = "40") int count, String name){
         int page = start / count;
@@ -72,7 +72,7 @@ public class GroupController {
     }
 
 
-    @PostMapping(value = {"/api/v6/group/create","/admin/group/create"})
+    @PostMapping(value = {"/api/group/create","/admin/group/create"})
     @ResponseBody
     public RestResult addGroup(Group form){
         try{
@@ -87,7 +87,7 @@ public class GroupController {
     }
 
 
-    @PostMapping(value = {"/api/v6/group/update","/admin/group/update"})
+    @PostMapping(value = {"/api/group/update","/admin/group/update"})
     @ResponseBody
     public RestResult updateGroup(Group form){
         try{
@@ -103,7 +103,7 @@ public class GroupController {
         }
     }
 
-    @GetMapping(value = {"/api/v6/group/delete","/admin/group/delete"})
+    @GetMapping(value = {"/api/group/delete","/admin/group/delete"})
     @ResponseBody
     public RestResult delete(String ids){
         try{

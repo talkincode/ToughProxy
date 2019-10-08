@@ -37,7 +37,7 @@ public class AclController {
     @Autowired
     AclCache aclCache;
 
-    @GetMapping(value = {"/api/v6/acl/query","/admin/acl/query"})
+    @GetMapping(value = {"/api/acl/query","/admin/acl/query"})
     @ResponseBody
     public PageResult<Acl> queryAcl(@RequestParam(defaultValue = "0") int start, @RequestParam(defaultValue = "40") int count, Acl aclquery){
         int page = start / count;
@@ -56,7 +56,7 @@ public class AclController {
     }
 
 
-    @PostMapping(value = {"/api/v6/acl/create","/admin/acl/create"})
+    @PostMapping(value = {"/api/acl/create","/admin/acl/create"})
     @ResponseBody
     public RestResult addAcl(Acl form){
         try{
@@ -73,7 +73,7 @@ public class AclController {
 
 
 
-    @PostMapping(value = {"/api/v6/acl/update","/admin/acl/update"})
+    @PostMapping(value = {"/api/acl/update","/admin/acl/update"})
     @ResponseBody
     public RestResult updatAcl(Acl form){
         try{
@@ -91,7 +91,7 @@ public class AclController {
     }
 
 
-    @GetMapping(value = {"/api/v6/acl/delete","/admin/acl/delete"})
+    @GetMapping(value = {"/api/acl/delete","/admin/acl/delete"})
     @ResponseBody
     public RestResult delete(String ids){
         try{

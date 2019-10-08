@@ -1,6 +1,6 @@
 #!/bin/sh
 currdir=$PWD
-version="v1.0.0.1"
+version="v1.0.0.2"
 releasedir=${currdir}/release/toughproxy-${version}
 releasefile=toughproxy-${version}.zip
 

@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.toughproxy.common.FileUtil;
 import org.toughproxy.component.Memarylogger;
 import org.toughproxy.config.Constant;
 import org.toughproxy.form.ApiConfigForm;
+import org.toughproxy.form.PoolConfigForm;
 import org.toughproxy.form.SmsConfigForm;
 import org.toughproxy.form.SystemConfigForm;
 import org.toughproxy.common.RestResult;
@@ -29,7 +31,7 @@ public class ConfigController implements Constant {
     @Autowired
     private ConfigService configService;
 
-    @GetMapping(value = {"/api/v6/config/load/{module}","/admin/config/load/{module}"})
+    @GetMapping(value = {"/api/config/load/{module}","/admin/config/load/{module}"})
     @ResponseBody
     public Map loadRadiusConfig(@PathVariable(name = "module") String module){
         Map result = new HashMap();
@@ -37,6 +39,12 @@ public class ConfigController implements Constant {
             List<Config> cfgs = configService.queryForList(module);
             for (Config cfg : cfgs){
                 result.put(cfg.getName(),cfg.getValue());
+            }
+            if(module.equals("pool")){
+                result.put("poolname",FileUtil.getFileContent(POOL_NAME_FILE).trim());
+                result.put("dialupInterval",FileUtil.getFileContent(POOL_DIAUP_INTERVAL_FILE).trim());
+                result.put("ipaddrType",FileUtil.getFileContent(POOL_IPADDR_TYPE_FILE).trim());
+                result.put("areaCode",FileUtil.getFileContent(POOL_AREA_CODE_FILE).trim());
             }
         }catch(Exception e){
             logger.error("query config error",e, Memarylogger.SYSTEM);
@@ -49,7 +57,7 @@ public class ConfigController implements Constant {
      * @param form
      * @return
      */
-    @PostMapping(value = {"/api/system/update","/admin/config/system/update"})
+    @PostMapping(value = {"/api/config/system/update","/admin/config/system/update"})
     @ResponseBody
     public RestResult updateSystemConfig(SystemConfigForm form){
         try{
@@ -66,11 +74,30 @@ public class ConfigController implements Constant {
     }
 
     /**
+     * RADIUS 配置更新
+     * @param form
+     * @return
+     */
+    @PostMapping(value = {"/api/config/pool/update","/admin/config/pool/update"})
+    @ResponseBody
+    public RestResult updatePoolConfig(PoolConfigForm form){
+        try{
+            FileUtil.writeFile(POOL_NAME_FILE,form.getPoolname().trim());
+            FileUtil.writeFile(POOL_DIAUP_INTERVAL_FILE,form.getDialupInterval().trim());
+            FileUtil.writeFile(POOL_IPADDR_TYPE_FILE,form.getIpaddrType().trim());
+            FileUtil.writeFile(POOL_AREA_CODE_FILE,form.getAreaCode().trim());
+        }catch(Exception e){
+            logger.error("update config error",e, Memarylogger.SYSTEM);
+        }
+        return new RestResult(0,"update pool config done");
+    }
+
+    /**
      * 短信配置更新呢
      * @param form
      * @return
      */
-    @PostMapping(value = {"/api/sms/update","/admin/config/sms/update"})
+    @PostMapping(value = {"/api/config/sms/update","/admin/config/sms/update"})
     @ResponseBody
     public RestResult updateSmsConfig(SmsConfigForm form){
         try{

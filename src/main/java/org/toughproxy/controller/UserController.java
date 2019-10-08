@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.toughproxy.common.*;
+import org.toughproxy.common.shell.LocalCommandExecutor;
 import org.toughproxy.component.Memarylogger;
 import org.toughproxy.entity.Group;
 import org.toughproxy.entity.User;
@@ -38,7 +39,7 @@ public class UserController {
     @Autowired
     SqlSessionTemplate sqlSessionTemplate;
 
-    @GetMapping(value = {"/api/v6/user/query","/admin/user/query"})
+    @GetMapping(value = {"/api/user/query","/admin/user/query"})
     @ResponseBody
     public PageResult<User> queryUser(@RequestParam(defaultValue = "0") int start,
                                       @RequestParam(defaultValue = "40") int count,
@@ -71,7 +72,7 @@ public class UserController {
         return result;
     }
 
-    @GetMapping(value = {"/api/v6/user/detail","/admin/user/detail"})
+    @GetMapping(value = {"/api/user/detail","/admin/user/detail"})
     @ResponseBody
     public RestResult<User> querySubscribeDetail(Long id){
         try{
@@ -82,7 +83,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = {"/api/v6/user/create","/admin/user/create"})
+    @PostMapping(value = {"/api/user/create","/admin/user/create"})
     @ResponseBody
     public RestResult addSubscribe(UserForm form){
         try{
@@ -109,7 +110,7 @@ public class UserController {
     }
 
 
-    @PostMapping(value = {"/api/v6/user/batchcreate","/admin/user/batchcreate"})
+    @PostMapping(value = {"/api/user/batchcreate","/admin/user/batchcreate"})
     @ResponseBody
     public RestResult batchAddUser(UserForm form){
         try{
@@ -145,7 +146,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = {"/api/v6/user/uppwd","/admin/user/uppwd"})
+    @PostMapping(value = {"/api/user/uppwd","/admin/user/uppwd"})
     @ResponseBody
     public RestResult updatePassword(UserForm form){
         try{
@@ -164,7 +165,7 @@ public class UserController {
     }
 
 
-    @PostMapping(value = {"/api/v6/user/update","/admin/user/update"})
+    @PostMapping(value = {"/api/user/update","/admin/user/update"})
     @ResponseBody
     public RestResult updateUser(UserForm form){
         try{
@@ -181,7 +182,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(value = {"/api/v6/user/delete","/admin/user/delete"})
+    @GetMapping(value = {"/api/user/delete","/admin/user/delete"})
     @ResponseBody
     public RestResult delete(String ids){
         try{

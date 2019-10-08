@@ -2,10 +2,10 @@
 
 install_package()
 {
-    \cp application-prod.properties /opt/application-prod.properties
-    \cp toughproxy-latest.jar /opt/toughproxy-latest.jar
+    mkdir -p /opt/toughproxy
+    \cp application-prod.properties /opt/toughproxy/application-prod.properties
+    \cp toughproxy-latest.jar /opt/toughproxy/toughproxy-latest.jar
     \cp toughproxy.service /usr/lib/systemd/system/toughproxy.service
-    \cp -r portal /opt/
     systemctl enable toughproxy
     echo "install done, please exec systenctl start toughproxy after initdb"
 }

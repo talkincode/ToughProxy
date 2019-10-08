@@ -79,7 +79,7 @@ public class SocksProxyConfig {
     @Bean(name = "tcpChannelOptions")
     public Map<ChannelOption<?>, Object> tcpChannelOptions() {
         Map<ChannelOption<?>, Object> options = new HashMap<>();
-        options.put(ChannelOption.SO_KEEPALIVE, keepAlive);
+//        options.put(ChannelOption.SO_KEEPALIVE, keepAlive);
         options.put(ChannelOption.SO_BACKLOG, backlog);
         return options;
     }

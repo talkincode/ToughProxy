@@ -6,9 +6,9 @@
 
 ## 上传安装包到服务器
 
-通过sftp或ftp上传安装包到服务器目录并解压， 通过终端 cd 进入解压目录， 比如
+通过sftp或ftp上传安装包到服务器目录并解压， 通过终端 cd 进入解压目录， 
 
-> /opt/toughproxy-v6.1.1.3
+> /opt/toughproxy/toughproxy-v6.1.1.3
 
 ## 数据库初始化
 
@@ -24,7 +24,7 @@
 
 ## 修改配置
 
-注意修改 /opt/application-prod.properties 配置文件中的数据库部分
+注意修改 /opt/toughproxy/application-prod.properties 配置文件中的数据库部分
 
 
 ## 运行服务

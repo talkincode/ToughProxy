@@ -61,4 +61,14 @@ public class RestResult<T> {
             setMsgtype("error");
         }
     }
+
+    @Override
+    public String toString() {
+        return "RestResult{" +
+                "code=" + code +
+                ", msg='" + msg + '\'' +
+                ", msgtype='" + msgtype + '\'' +
+                ", data=" + data +
+                '}';
+    }
 }

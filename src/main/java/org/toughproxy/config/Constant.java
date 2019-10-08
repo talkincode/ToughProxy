@@ -31,6 +31,13 @@ public interface Constant {
     public final static String SMS_APPKEY = "smsAppkey";
     public final static String SMS_VCODE_TEMPLATE = "smsVcodeTemplate";
 
+    public final static String POOL_MODULE = "pool";
+    public final static String POOL_NAME_FILE = "/var/toughproxy/poolname";
+    public final static String POOL_IPADDR_TYPE_FILE = "/var/toughproxy/ipaddrType";
+    public final static String POOL_DIAUP_INTERVAL_FILE = "/var/toughproxy/dialupInterval";
+    public final static String POOL_AREA_CODE_FILE = "/var/toughproxy/areaCode";
+
+
     public final static int RADIUS_VENDOR = 18168;
     public final static int RADIUS_UP_LIMIT_ATTR_TYPE = 1;
     public final static int RADIUS_DOWN_LIMIT_ATTR_TYPE = 2;

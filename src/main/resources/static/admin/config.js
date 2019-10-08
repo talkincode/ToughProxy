@@ -10,7 +10,7 @@ toughproxy.admin.config.loadPage = function(session){
         // borderless:true,
         view:"tabview",
         tabbar:{
-            optionWidth:160,
+            optionWidth:160
         },
         cells:[
             {
@@ -20,7 +20,7 @@ toughproxy.admin.config.loadPage = function(session){
                     view: "form",
                     paddingX:10,
                     elementsConfig: {
-                        labelWidth:160,
+                        labelWidth:160
                         // labelPosition:"top"
                     },
                     url:"/admin/config/load/system",
@@ -147,6 +147,53 @@ toughproxy.admin.config.loadPage = function(session){
                 }
             },
             {
+                header:"IP 池设置",
+                body:{
+                    id: "pool_settings",
+                    view: "form",
+                    paddingX:10,
+                    elementsConfig: {
+                        labelWidth:160,
+                        // labelPosition:"top"
+                    },
+                    url:"/admin/config/load/pool",
+                    elements: [
+                        { view: "fieldset", label: "API",  body: {
+                            rows:[
+                                    {view: "text", name: "poolname", label: "本服务器IP池名称"},
+                                    {view: "text", name: "areaCode", label: "本服务器IP池区域代码"},
+                                    {
+                                        view: "richselect", name: "ipaddrType", value:"1", label: "本服务器IP池类型", icon: "caret-down",
+                                        options: [
+                                            { id: '1', value: "短效IP" },
+                                            { id: '2', value: "长效IP" }
+                                        ]
+                                    },
+                                    {view: "counter", name: "dialupInterval", label: "本服务器IP池重拨间隔(秒)",  value:300, min:1, max:8640000},
+                                ]
+                            }},
+                        {
+                            cols: [
+                                {view: "button", name: "submit", type: "form", value: "保存配置", width: 120, height:36, click: function () {
+                                        if (!$$("pool_settings").validate()){
+                                            webix.message({type: "error", text:"请正确填写",expire:1000});
+                                            return false;
+                                        }
+                                        var param =  $$("pool_settings").getValues();
+                                        param['ctype'] = 'pool';
+                                        webix.ajax().post('/admin/config/pool/update',param).then(function (result) {
+                                            var resp = result.json();
+                                            webix.message({type: resp.msgtype, text: resp.msg, expire: 3000});
+                                        });
+                                    }
+                                },
+                                {}
+                            ]
+                        },{}
+                    ]
+                }
+            },
+            {
                 header:"API 设置",
                 body:{
                     id: "api_settings",
@@ -159,14 +206,14 @@ toughproxy.admin.config.loadPage = function(session){
                     url:"/admin/config/load/api",
                     elements: [
                         { view: "fieldset", label: "API",  body: {
-                                rows:[
-                                    {view: "richselect", name: "apiType", label: "API 类型:",value:"basic", options:[{id:"basic",value:"Basic"}]},
-                                    {view: "text", name: "apiUsername", label: "Basic 用户"},
-                                    {view: "text", type:"password", name: "apiPasswd", label: "Basic 密码"},
-                                    {view: "text", name: "apiAllowIplist", label: "IP 白名单"},
-                                    {view: "text", name: "apiBlackIplist", label: "IP 黑名单"}
-                                ]
-                            }},
+                            rows:[
+                                {view: "richselect", name: "apiType", label: "API 类型:",value:"basic", options:[{id:"basic",value:"Basic"}]},
+                                {view: "text", name: "apiUsername", label: "Basic 用户"},
+                                {view: "text", type:"password", name: "apiPasswd", label: "Basic 密码"},
+                                {view: "text", name: "apiAllowIplist", label: "IP 白名单"},
+                                {view: "text", name: "apiBlackIplist", label: "IP 黑名单"}
+                            ]
+                        }},
                         {
                             cols: [
                                 {view: "button", name: "submit", type: "form", value: "保存配置", width: 120, height:36, click: function () {
@@ -187,10 +234,8 @@ toughproxy.admin.config.loadPage = function(session){
                         },{}
                     ]
                 }
-            },
+            }
         ]
-
-
     };
     toughproxy.admin.methods.addTabView("toughproxy.admin.config","cogs","系统配置", cview, true);
 };
