@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.toughproxy.mapper.TsPppItemMapper">
+  <resultMap id="BaseResultMap" type="org.toughproxy.entity.TsPppItem">
+    <!--@mbg.generated-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="poolname" jdbcType="VARCHAR" property="poolname" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="ipaddr" jdbcType="VARCHAR" property="ipaddr" />
+    <result column="peer" jdbcType="VARCHAR" property="peer" />
+    <result column="time_type" jdbcType="INTEGER" property="timeType" />
+    <result column="last_dia" jdbcType="TIMESTAMP" property="lastDia" />
+    <result column="dia_times" jdbcType="INTEGER" property="diaTimes" />
+    <result column="area_code" jdbcType="VARCHAR" property="areaCode" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, poolname, `name`, ipaddr, peer, time_type, last_dia, dia_times, area_code
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from ts_ppp_item
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from ts_ppp_item
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.toughproxy.entity.TsPppItem" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into ts_ppp_item (poolname, `name`, ipaddr, 
+      peer, time_type, last_dia, 
+      dia_times, area_code)
+    values (#{poolname,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{ipaddr,jdbcType=VARCHAR}, 
+      #{peer,jdbcType=VARCHAR}, #{timeType,jdbcType=INTEGER}, #{lastDia,jdbcType=TIMESTAMP}, 
+      #{diaTimes,jdbcType=INTEGER}, #{areaCode,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.toughproxy.entity.TsPppItem" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into ts_ppp_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="poolname != null">
+        poolname,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="ipaddr != null">
+        ipaddr,
+      </if>
+      <if test="peer != null">
+        peer,
+      </if>
+      <if test="timeType != null">
+        time_type,
+      </if>
+      <if test="lastDia != null">
+        last_dia,
+      </if>
+      <if test="diaTimes != null">
+        dia_times,
+      </if>
+      <if test="areaCode != null">
+        area_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="poolname != null">
+        #{poolname,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ipaddr != null">
+        #{ipaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="peer != null">
+        #{peer,jdbcType=VARCHAR},
+      </if>
+      <if test="timeType != null">
+        #{timeType,jdbcType=INTEGER},
+      </if>
+      <if test="lastDia != null">
+        #{lastDia,jdbcType=TIMESTAMP},
+      </if>
+      <if test="diaTimes != null">
+        #{diaTimes,jdbcType=INTEGER},
+      </if>
+      <if test="areaCode != null">
+        #{areaCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.toughproxy.entity.TsPppItem">
+    <!--@mbg.generated-->
+    update ts_ppp_item
+    <set>
+      <if test="poolname != null">
+        poolname = #{poolname,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ipaddr != null">
+        ipaddr = #{ipaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="peer != null">
+        peer = #{peer,jdbcType=VARCHAR},
+      </if>
+      <if test="timeType != null">
+        time_type = #{timeType,jdbcType=INTEGER},
+      </if>
+      <if test="lastDia != null">
+        last_dia = #{lastDia,jdbcType=TIMESTAMP},
+      </if>
+      <if test="diaTimes != null">
+        dia_times = #{diaTimes,jdbcType=INTEGER},
+      </if>
+      <if test="areaCode != null">
+        area_code = #{areaCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.toughproxy.entity.TsPppItem">
+    <!--@mbg.generated-->
+    update ts_ppp_item
+    set poolname = #{poolname,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      ipaddr = #{ipaddr,jdbcType=VARCHAR},
+      peer = #{peer,jdbcType=VARCHAR},
+      time_type = #{timeType,jdbcType=INTEGER},
+      last_dia = #{lastDia,jdbcType=TIMESTAMP},
+      dia_times = #{diaTimes,jdbcType=INTEGER},
+      area_code = #{areaCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update ts_ppp_item
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="poolname = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.poolname,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`name` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.name,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="ipaddr = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.ipaddr,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="peer = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.peer,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="time_type = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.timeType,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="last_dia = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.lastDia,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="dia_times = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.diaTimes,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="area_code = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.areaCode,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into ts_ppp_item
+    (poolname, `name`, ipaddr, peer, time_type, last_dia, dia_times, area_code)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.poolname,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.ipaddr,jdbcType=VARCHAR}, 
+        #{item.peer,jdbcType=VARCHAR}, #{item.timeType,jdbcType=INTEGER}, #{item.lastDia,jdbcType=TIMESTAMP}, 
+        #{item.diaTimes,jdbcType=INTEGER}, #{item.areaCode,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="org.toughproxy.entity.TsPppItem" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into ts_ppp_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      poolname,
+      `name`,
+      ipaddr,
+      peer,
+      time_type,
+      last_dia,
+      dia_times,
+      area_code,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{poolname,jdbcType=VARCHAR},
+      #{name,jdbcType=VARCHAR},
+      #{ipaddr,jdbcType=VARCHAR},
+      #{peer,jdbcType=VARCHAR},
+      #{timeType,jdbcType=INTEGER},
+      #{lastDia,jdbcType=TIMESTAMP},
+      #{diaTimes,jdbcType=INTEGER},
+      #{areaCode,jdbcType=VARCHAR},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      poolname = #{poolname,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      ipaddr = #{ipaddr,jdbcType=VARCHAR},
+      peer = #{peer,jdbcType=VARCHAR},
+      time_type = #{timeType,jdbcType=INTEGER},
+      last_dia = #{lastDia,jdbcType=TIMESTAMP},
+      dia_times = #{diaTimes,jdbcType=INTEGER},
+      area_code = #{areaCode,jdbcType=VARCHAR},
+    </trim>
+  </insert>
+  <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="org.toughproxy.entity.TsPppItem" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into ts_ppp_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="poolname != null">
+        poolname,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="ipaddr != null">
+        ipaddr,
+      </if>
+      <if test="peer != null">
+        peer,
+      </if>
+      <if test="timeType != null">
+        time_type,
+      </if>
+      <if test="lastDia != null">
+        last_dia,
+      </if>
+      <if test="diaTimes != null">
+        dia_times,
+      </if>
+      <if test="areaCode != null">
+        area_code,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="poolname != null">
+        #{poolname,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ipaddr != null">
+        #{ipaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="peer != null">
+        #{peer,jdbcType=VARCHAR},
+      </if>
+      <if test="timeType != null">
+        #{timeType,jdbcType=INTEGER},
+      </if>
+      <if test="lastDia != null">
+        #{lastDia,jdbcType=TIMESTAMP},
+      </if>
+      <if test="diaTimes != null">
+        #{diaTimes,jdbcType=INTEGER},
+      </if>
+      <if test="areaCode != null">
+        #{areaCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="poolname != null">
+        poolname = #{poolname,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ipaddr != null">
+        ipaddr = #{ipaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="peer != null">
+        peer = #{peer,jdbcType=VARCHAR},
+      </if>
+      <if test="timeType != null">
+        time_type = #{timeType,jdbcType=INTEGER},
+      </if>
+      <if test="lastDia != null">
+        last_dia = #{lastDia,jdbcType=TIMESTAMP},
+      </if>
+      <if test="diaTimes != null">
+        dia_times = #{diaTimes,jdbcType=INTEGER},
+      </if>
+      <if test="areaCode != null">
+        area_code = #{areaCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+
+<!--auto generated by MybatisCodeHelper on 2019-09-28-->
+  <select id="findByAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ts_ppp_item
+    where 1=1
+    <if test="id != null">
+      and id=#{id,jdbcType=BIGINT}
+    </if>
+    <if test="poolname != null">
+      and poolname=#{poolname,jdbcType=VARCHAR}
+    </if>
+    <if test="name != null">
+      and `name`=#{name,jdbcType=VARCHAR}
+    </if>
+    <if test="ipaddr != null">
+      and ipaddr=#{ipaddr,jdbcType=VARCHAR}
+    </if>
+    <if test="peer != null">
+      and peer=#{peer,jdbcType=VARCHAR}
+    </if>
+    <if test="timeType != null">
+      and time_type=#{timeType,jdbcType=INTEGER}
+    </if>
+    <if test="lastDia != null">
+      and last_dia &lt;=  #{lastDia,jdbcType=TIMESTAMP}
+    </if>
+    <if test="diaTimes != null">
+      and dia_times=#{diaTimes,jdbcType=INTEGER}
+    </if>
+  </select>
+
+<!--auto generated by MybatisCodeHelper on 2019-09-28-->
+  <select id="countByPoolnameAndName" resultType="java.lang.Long">
+    select count(1)
+    from ts_ppp_item
+    where poolname=#{poolname,jdbcType=VARCHAR} and `name`=#{name,jdbcType=VARCHAR}
+  </select>
+
+<!--auto generated by MybatisCodeHelper on 2019-09-28-->
+  <select id="getByPoolnameAndName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ts_ppp_item
+    where poolname=#{poolname,jdbcType=VARCHAR} and `name`=#{name,jdbcType=VARCHAR}
+  </select>
+
+</mapper>
